@@ -1,0 +1,256 @@
+<?xml version="1.0"?>
+<robot name="bolid" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:property name="wheel_radius" value="0.035"/>
+  <xacro:property name="wheel_width" value="0.010"/>
+  <xacro:property name="chassis_length" value="0.375"/>
+  <xacro:property name="chassis_width" value="0.125"/>
+  <xacro:property name="chassis_height" value="0.03"/>
+
+  <xacro:property name="max_steering_angle" value="0.6108" />
+  <xacro:property name="max_steering_angular_velocity" value="20.0" />
+  <xacro:property name="max_steering_effort" value="200.0" />
+  <xacro:property name="max_wheel_angular_velocity" value="100.0"/>
+  <xacro:property name="max_effort" value="30.0" />
+
+  <xacro:macro name="box_inertia" params="m l w h xyz rpy">
+      <inertial>
+          <origin xyz="${xyz}" rpy="${rpy}"/>
+          <mass value="${m}"/>
+          <inertia ixx="${(1/12) * m * (w*w + h*h)}" ixy="0.0" ixz="0.0" 
+                   iyy="${(1/12) * m * (l*l + h*h)}" iyz="0.0" 
+                   izz="${(1/12) * m * (l*l + w*w)}"/>
+      </inertial>
+  </xacro:macro>
+
+  <xacro:macro name="cylinder_inertia" params="m r h xyz rpy">
+      <inertial>
+          <origin xyz="${xyz}" rpy="${rpy}"/>
+          <mass value="${m}"/>
+          <inertia ixx="${(1/12) * m * (3*r*r + h*h)}" ixy="0.0" ixz="0.0" 
+                   iyy="${(1/12) * m * (3*r*r + h*h)}" iyz="0.0" 
+                   izz="${(1/2) * m * r*r}"/>
+      </inertial>
+  </xacro:macro>
+
+  <xacro:macro name="steering_inertia" params="">
+      <inertial>
+        <mass value="0.1"/>
+        <inertia ixx="1e-3" ixy="0.0" ixz="0.0" iyy="1e-3" iyz="0.0" izz="1e-3"/>
+      </inertial>
+  </xacro:macro>
+
+  <material name="red"> <color rgba="1 0 0 1"/> </material>
+  <material name="black"> <color rgba="0 0 0 1"/> </material>
+
+  <link name="base_footprint"/>
+
+  <link name="base_link">
+      <visual>
+          <geometry>
+              <box size="${chassis_length} ${chassis_width} ${chassis_height}"/>
+          </geometry>
+          <material name="red"/>
+      </visual>
+      <collision>
+          <geometry>
+              <box size="${chassis_length} ${chassis_width} ${chassis_height}"/>
+          </geometry>
+      </collision>
+      <xacro:box_inertia m="2" l="${chassis_length}" w="${chassis_width}" h="${chassis_height}" xyz="0 0 0" rpy="0 0 0"/>
+  </link>
+
+  <joint name="base_footprint_base_joint" type="fixed">
+      <parent link="base_footprint"/>
+      <child link="base_link"/>
+      <origin xyz="0 0 ${wheel_radius}" rpy="0 0 0"/>
+  </joint>
+
+  <link name="platform_link">
+      <visual>
+          <geometry> <box size="0.22 0.23 0.03"/> </geometry>
+          <material name="red"/>
+      </visual>
+      <collision>
+          <geometry> <box size="0.22 0.23 0.03"/> </geometry>
+      </collision>
+      <xacro:box_inertia m="1.5" l="0.22" w="0.23" h="0.03" xyz="0 0 0" rpy="0 0 0"/>
+  </link>
+
+  <joint name="base_platform_joint" type="fixed">
+      <parent link="base_link"/>
+      <child link="platform_link"/>
+      <origin xyz="-0.0075 0 0.0001" rpy="0 0 0"/>
+  </joint>
+
+  <xacro:macro name="wheel_bar" params="prefix x_off length">
+      <link name="${prefix}_wheel_bar">
+          <visual>
+              <geometry> <cylinder radius="0.01" length="${length}"/> </geometry>            
+              <origin xyz="0.0 0.0 0.0" rpy="-1.57 0.0 0.0"/>
+          </visual>
+          <xacro:cylinder_inertia m="0.05" r="0.01" h="${length}" xyz="0 0 0" rpy="-1.57 0 0"/>
+      </link>
+      <joint name="base_${prefix}_wheel_bar" type="fixed">
+          <parent link="base_link"/>
+          <child link="${prefix}_wheel_bar"/>
+          <origin xyz="${x_off} 0.0 0.0"/>
+      </joint>
+  </xacro:macro>
+
+  <xacro:wheel_bar prefix="front" x_off="0.1575" length="0.190"/>
+  <xacro:wheel_bar prefix="rear" x_off="-0.1725" length="0.220"/>
+
+  <xacro:macro name="front_wheel" params="prefix x_off y_off">
+      <link name="${prefix}_steering_link">
+          <xacro:steering_inertia/>
+      </link>
+
+      <joint name="${prefix}_steering_joint" type="revolute">
+          <parent link="base_link"/>
+          <child link="${prefix}_steering_link"/>
+          <origin xyz="${x_off} ${y_off} 0" rpy="0 0 0"/>
+          <axis xyz="0 0 1"/>
+          <limit effort="${max_steering_effort}" lower="${-max_steering_angle}" upper="${max_steering_angle}" velocity="${max_steering_angular_velocity}"/>
+          <!-- <dynamics damping="0.1" friction="0.1"/> -->
+      </joint>
+
+      <link name="${prefix}_wheel_link">
+          <visual>
+              <geometry> <cylinder radius="${wheel_radius}" length="${wheel_width}"/> </geometry>
+              <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+              <material name="black"/>
+          </visual>
+          <collision>
+              <geometry> <sphere radius="${wheel_radius}"/> </geometry>
+              <origin xyz="0 0 0" rpy="0 0 0"/>
+          </collision>
+           <xacro:cylinder_inertia m="0.2" r="${wheel_radius}" h="${wheel_width}" xyz="0 0 0" rpy="1.5708 0 0"/>
+      </link>
+
+      <joint name="${prefix}_wheel_joint" type="continuous">
+          <parent link="${prefix}_steering_link"/>
+          <child link="${prefix}_wheel_link"/>
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+          <axis xyz="0 1 0"/>
+          <limit effort="${max_effort}" velocity="${max_wheel_angular_velocity}"/>
+          <!-- <dynamics damping="0.01" friction="0.01"/> -->
+      </joint>
+
+      <gazebo reference="${prefix}_wheel_link">
+          <mu1>1.0</mu1>
+          <mu2>0.85</mu2>  
+          <fdir1>1 0 0</fdir1>
+          <kp>10000000.0</kp>
+          <kd>1.0</kd>
+          <minDepth>0.001</minDepth>
+          <material>Gazebo/Black</material>
+      </gazebo>
+  </xacro:macro>
+
+  <xacro:front_wheel prefix="front_left"  x_off="0.1575" y_off="0.095"/>
+  <xacro:front_wheel prefix="front_right" x_off="0.1575" y_off="-0.095"/>
+
+  <xacro:macro name="rear_wheel" params="prefix x_off y_off">
+      <link name="${prefix}_wheel_link">
+          <visual>
+              <geometry> <cylinder radius="${wheel_radius}" length="${wheel_width}"/> </geometry>
+              <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+              <material name="black"/>
+          </visual>
+          <collision>
+              <geometry> <sphere radius="${wheel_radius}"/> </geometry>
+              <origin xyz="0 0 0" rpy="0 0 0"/>
+          </collision>
+           <xacro:cylinder_inertia m="0.2" r="${wheel_radius}" h="${wheel_width}" xyz="0 0 0" rpy="1.5708 0 0"/>
+      </link>
+
+      <joint name="${prefix}_wheel_joint" type="continuous">
+          <parent link="base_link"/>
+          <child link="${prefix}_wheel_link"/>
+          <origin xyz="${x_off} ${y_off} 0" rpy="0 0 0"/>
+          <axis xyz="0 1 0"/>
+          <limit effort="${max_effort}" velocity="${max_wheel_angular_velocity}"/>
+          <!-- <dynamics damping="0.01" friction="0.01"/> -->
+      </joint>
+
+      <gazebo reference="${prefix}_wheel_link">
+          <mu1>1.0</mu1>
+          <mu2>0.85</mu2>  
+          <fdir1>1 0 0</fdir1>
+          <kp>10000000.0</kp>
+          <kd>1.0</kd>
+          <minDepth>0.001</minDepth>
+          <material>Gazebo/Black</material>
+      </gazebo>
+  </xacro:macro>
+
+  <xacro:rear_wheel prefix="rear_left"   x_off="-0.1725" y_off="0.110"/>
+  <xacro:rear_wheel prefix="rear_right"  x_off="-0.1725" y_off="-0.110"/>
+
+  <gazebo reference="base_link"><material>Gazebo/Red</material></gazebo>
+  <gazebo reference="platform_link"><material>Gazebo/Red</material></gazebo>
+
+  <ros2_control name="control" type="system">
+    <hardware>
+      <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+    </hardware>
+          
+    <joint name="front_left_steering_joint">
+      <command_interface name="position">
+        <param name="min">${-max_steering_angle}</param>
+        <param name="max">${max_steering_angle}</param>
+      </command_interface>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+
+    <joint name="front_right_steering_joint">
+      <command_interface name="position">
+        <param name="min">${-max_steering_angle}</param>
+        <param name="max">${max_steering_angle}</param>
+      </command_interface>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+
+    <joint name="rear_left_wheel_joint">
+      <command_interface name="velocity">
+        <param name="min">${-max_wheel_angular_velocity}</param>
+        <param name="max">${max_wheel_angular_velocity}</param>
+      </command_interface>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+
+    <joint name="rear_right_wheel_joint">
+      <command_interface name="velocity">
+        <param name="min">${-max_wheel_angular_velocity}</param>
+        <param name="max">${max_wheel_angular_velocity}</param>
+      </command_interface>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+  </ros2_control>
+
+  <gazebo>
+    <plugin filename="gz-sim-joint-state-publisher-system" name="gz::sim::systems::JointStatePublisher">
+      <topic>joint_states</topic>
+      <joint_name>front_left_steering_joint</joint_name>
+      <joint_name>front_right_steering_joint</joint_name>
+      <joint_name>front_left_wheel_joint</joint_name>
+      <joint_name>front_right_wheel_joint</joint_name>
+      <joint_name>rear_left_wheel_joint</joint_name>
+      <joint_name>rear_right_wheel_joint</joint_name>
+    </plugin>
+
+    <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <parameters>$(find gazebo_ackermann_steering_vehicle)/config/gz_ros2_control.yaml</parameters>
+    </plugin>
+  </gazebo>
+
+</robot>
