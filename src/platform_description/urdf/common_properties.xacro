@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <xacro:property name="wheel_width" value="0.010"/>
+    <xacro:property name="wheel_radius" value="0.035"/>
+    <xacro:property name="chassis_length" value="0.375"/>
+    <xacro:property name="chassis_width" value="0.125"/>
+    <xacro:property name="chassis_height" value="0.03"/>
+  
+    <xacro:property name="max_steering_angle" value="0.6108" />
+    <xacro:property name="max_steering_angular_velocity" value="20.0" />
+    <xacro:property name="max_steering_effort" value="200.0" />
+    <xacro:property name="max_wheel_angular_velocity" value="100.0"/>
+    <xacro:property name="max_effort" value="30.0" />
+</robot>

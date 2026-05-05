@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>gazebo_ackermann_steering_vehicle</name>
+  <name>platform_description</name>
   <version>0.0.0</version>
-  <description>A ROS 2 package for simulating an Ackermann steering vehicle. Includes robot modeling, control, and Gazebo simulation integration.</description>
-  <maintainer email="workabotic@gmail.com">Lucas Mazzetto</maintainer>
-  <license>MIT</license>
+  <description>TODO: Package description</description>
+  <maintainer email="luszczkacper42@gmail.com">Kacper</maintainer>
+  <license>TODO: License declaration</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
   

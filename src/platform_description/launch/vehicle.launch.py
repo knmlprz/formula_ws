@@ -90,12 +90,12 @@ def generate_launch_description():
     yaw = LaunchConfiguration('Y')
 
     # Define the robot's and package name
-    package_name = "gazebo_ackermann_steering_vehicle"
+    package_name = "platform_description"
     package_path = get_package_share_directory(package_name)
 
     # Set paths to Xacro model and configuration files
-    robot_description_path = os.path.join(package_path, 'model',
-                                          'vehicle.xacro')
+    robot_description_path = os.path.join(package_path, 'urdf',
+                                          'platform.urdf.xacro')
 
     gz_bridge_params_path = os.path.join(package_path, 'config',
                                          'ros_gz_bridge.yaml')
@@ -153,7 +153,7 @@ def generate_launch_description():
     joint_state, ackermann_controller = start_vehicle_control()
 
     # Load vehicle controller node
-    vehicle_controller_node = Node(package='gazebo_ackermann_steering_vehicle',
+    vehicle_controller_node = Node(package='platform_description',
                                    executable='vehicle_controller',
                                    parameters=[vehicle_params_path],
                                    output='screen')
