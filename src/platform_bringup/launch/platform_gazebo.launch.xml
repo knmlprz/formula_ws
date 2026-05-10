@@ -1,6 +1,6 @@
 <launch>
-    <let name="pkg" value="$(find-pkg-share platform_description)" />
-    <let name="urdf_file" value="$(var pkg)/urdf/platform.urdf.xacro" />
+    <let name="pkg" value="$(find-pkg-share platform_bringup)" />
+    <let name="urdf_file" value="$(find-pkg-share platform_description)/urdf/platform.urdf.xacro" />
     <let name="bridge_config" value="$(var pkg)/config/ros_gz_bridge.yaml" />
     <let name="params_file" value="$(var pkg)/config/parameters.yaml" />
 
