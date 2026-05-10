@@ -59,7 +59,7 @@
     </plugin>
 
     <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
-      <parameters>$(find platform_description)/config/gz_ros2_control.yaml</parameters>
+      <parameters>$(find platform_bringup)/config/gz_ros2_control.yaml</parameters>
     </plugin>
   </gazebo>
 </robot>
