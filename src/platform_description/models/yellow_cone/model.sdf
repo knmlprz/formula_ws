@@ -1,0 +1,38 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <model name="yellow_cone">
+    <static>false</static>
+    <link name="link">
+      <visual name="visual">
+        <geometry>
+          <mesh>
+            <uri>file://home/damianek/.gazebo/models/yellow_cone/meshes/cone.obj</uri>
+<scale>0.1 0.1 0.1</scale>
+          </mesh>
+        </geometry>
+
+      </visual>
+
+      <collision name="collision">
+        <geometry>
+            <box>
+      <size>0.05 0.05 0.10</size>
+    </box>
+        </geometry>
+      </collision>
+
+      <inertial>
+          <mass>0.1</mass>
+          <inertia>
+            <ixx>0.00104</ixx>
+            <iyy>0.000417</iyy>
+            <izz>0.00104</izz>
+            <ixy>0.0</ixy>
+            <ixz>0.0</ixz>
+            <iyz>0.0</iyz>
+          </inertia>
+        </inertial>
+    </link>
+  </model>
+</sdf>
+
