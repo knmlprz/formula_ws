@@ -15,7 +15,7 @@ find_package(geometry_msgs REQUIRED)
 include_directories(include)
 
 install(
-  DIRECTORY launch urdf config
+  DIRECTORY urdf
   DESTINATION share/${PROJECT_NAME}
 )
 

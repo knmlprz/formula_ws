@@ -1,0 +1,27 @@
+<launch>
+    <let name="pkg" value="$(find-pkg-share platform_bringup)" />
+    <let name="urdf_file" value="$(find-pkg-share platform_description)/urdf/platform.urdf.xacro" />
+    <let name="bridge_config" value="$(var pkg)/config/ros_gz_bridge.yaml" />
+    <let name="params_file" value="$(var pkg)/config/parameters.yaml" />
+
+    <let name="robot_desc" value="$(command 'xacro $(var urdf_file)')" />
+
+    <include file="$(find-pkg-share ros_gz_sim)/launch/gz_sim.launch.py">
+        <arg name="gz_args" value="-r empty.sdf" />
+    </include>
+
+    <node pkg="robot_state_publisher" exec="robot_state_publisher" output="screen">
+        <param name="robot_description" value="$(var robot_desc)" />
+        <param name="use_sim_time" value="true" />
+    </node>
+
+    <node pkg="ros_gz_sim" exec="create" name="spawn_robot" output="screen"
+          args="-name ackermann_vehicle -topic robot_description" />
+
+    <node pkg="ros_gz_bridge" exec="parameter_bridge" output="screen"
+          args="--ros-args -p config_file:=$(var bridge_config)" />
+
+    <node pkg="controller_manager" exec="spawner" args="joint_state_broadcaster" output="screen" />
+    <node pkg="controller_manager" exec="spawner" args="ackermann_steering_controller" output="screen" />
+
+</launch>
