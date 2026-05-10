@@ -7,7 +7,8 @@
     <let name="robot_desc" value="$(command 'xacro $(var urdf_file)')" />
 
     <include file="$(find-pkg-share ros_gz_sim)/launch/gz_sim.launch.py">
-        <arg name="gz_args" value="-r empty.sdf" />
+        <!-- <arg name="gz_args" value="-r empty.sdf" /> -->
+        <arg name="gz_args" value="$(var pkg)/worlds/empty.sdf -r" />
     </include>
 
     <node pkg="robot_state_publisher" exec="robot_state_publisher" output="screen">
