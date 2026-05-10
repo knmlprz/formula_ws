@@ -3,5 +3,6 @@
     <xacro:include filename="common_properties.xacro"/>
     <xacro:include filename="inertials.xacro"/>
     <xacro:include filename="platform_base.xacro"/>
+    <xacro:include filename="depth_camera.xacro"/>
     <xacro:include filename="gazebo_ros2_control.xacro"/>
 </robot>
