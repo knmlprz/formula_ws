@@ -1,6 +1,10 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
+
+<!-- ============================================== -->
+<!-- ROBOT BASE (Main chassis body)                 -->
+<!-- ============================================== -->
   <link name="base_footprint"/>
 
   <link name="base_link">
@@ -24,6 +28,9 @@
       <origin xyz="0 0 ${wheel_radius}" rpy="0 0 0"/>
   </joint>
 
+<!-- ============================================== -->
+<!-- PLATFORM (Additional element on the chassis)   -->
+<!-- ============================================== -->
   <link name="platform_link">
       <visual>
           <geometry> <box size="0.22 0.23 0.03"/> </geometry>
@@ -41,6 +48,9 @@
       <origin xyz="-0.0075 0 0.0001" rpy="0 0 0"/>
   </joint>
 
+<!-- ============================================== -->
+<!-- WHEEL AXLES (Connectors between base & wheels) -->
+<!-- ============================================== -->
   <xacro:macro name="wheel_bar" params="prefix x_off length">
       <link name="${prefix}_wheel_bar">
           <visual>
@@ -59,6 +69,9 @@
   <xacro:wheel_bar prefix="front" x_off="0.1575" length="0.190"/>
   <xacro:wheel_bar prefix="rear" x_off="-0.1725" length="0.220"/>
 
+<!-- ============================================== -->
+<!-- FRONT WHEELS (Includes steering mechanism)     -->
+<!-- ============================================== -->
   <xacro:macro name="front_wheel" params="prefix x_off y_off">
       <link name="${prefix}_steering_link">
           <xacro:steering_inertia/>
@@ -109,6 +122,9 @@
   <xacro:front_wheel prefix="front_left"  x_off="0.1575" y_off="0.095"/>
   <xacro:front_wheel prefix="front_right" x_off="0.1575" y_off="-0.095"/>
 
+<!-- ============================================== -->
+<!-- REAR WHEELS (Drive only, no steering)          -->
+<!-- ============================================== -->
   <xacro:macro name="rear_wheel" params="prefix x_off y_off">
       <link name="${prefix}_wheel_link">
           <visual>
