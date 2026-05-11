@@ -33,20 +33,21 @@
 <!-- ============================================== -->
   <link name="platform_link">
       <visual>
-          <geometry> <box size="0.22 0.23 0.03"/> </geometry>
+          <geometry> <box size="${platform_length} ${platform_width} ${platform_height}"/> </geometry>
           <material name="red"/>
       </visual>
       <collision>
-          <geometry> <box size="0.22 0.23 0.03"/> </geometry>
+          <geometry> <box size="${platform_length} ${platform_width} ${platform_height}"/> </geometry>
       </collision>
-      <xacro:box_inertia m="1.5" l="0.22" w="0.23" h="0.03" xyz="0 0 0" rpy="0 0 0"/>
+      <xacro:box_inertia m="${platform_mass}" l="${platform_length}" w="${platform_width}" h="${platform_height}" xyz="0 0 0" rpy="0 0 0"/>
   </link>
 
   <joint name="base_platform_joint" type="fixed">
       <parent link="base_link"/>
       <child link="platform_link"/>
-      <origin xyz="-0.0075 0 0.0001" rpy="0 0 0"/>
+      <origin xyz="${platform_offset_x} ${platform_offset_y} ${platform_offset_z}" rpy="0 0 0"/>
   </joint>
+
 
 <!-- ============================================== -->
 <!-- WHEEL AXLES (Connectors between base & wheels) -->
@@ -54,10 +55,10 @@
   <xacro:macro name="wheel_bar" params="prefix x_off length">
       <link name="${prefix}_wheel_bar">
           <visual>
-              <geometry> <cylinder radius="0.01" length="${length}"/> </geometry>            
+              <geometry> <cylinder radius="${wheel_bar_radius}" length="${length}"/> </geometry>            
               <origin xyz="0.0 0.0 0.0" rpy="-1.57 0.0 0.0"/>
           </visual>
-          <xacro:cylinder_inertia m="0.05" r="0.01" h="${length}" xyz="0 0 0" rpy="-1.57 0 0"/>
+          <xacro:cylinder_inertia m="${wheel_bar_mass}" r="${wheel_bar_radius}" h="${length}" xyz="0 0 0" rpy="-1.57 0 0"/>
       </link>
       <joint name="base_${prefix}_wheel_bar" type="fixed">
           <parent link="base_link"/>
