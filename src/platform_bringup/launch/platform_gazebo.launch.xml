@@ -22,6 +22,8 @@
           args="--ros-args -p config_file:=$(var bridge_config)" />
 
     <node pkg="controller_manager" exec="spawner" args="joint_state_broadcaster" output="screen" />
-    <node pkg="controller_manager" exec="spawner" args="ackermann_steering_controller" output="screen" />
+    <node pkg="controller_manager" exec="spawner" args="ackermann_steering_controller --controller-ros-args '--ros-args --remap /ackermann_steering_controller/odometry:=/odom --remap /ackermann_steering_controller/tf_odometry:=/tf'" output="screen" />
+
+
 
 </launch>
