@@ -2,9 +2,12 @@
     <let name="pkg" value="$(find-pkg-share platform_bringup)" />
     <let name="urdf_file" value="$(find-pkg-share platform_description)/urdf/platform.urdf.xacro" />
     <let name="bridge_config" value="$(var pkg)/config/ros_gz_bridge.yaml" />
-    <let name="params_file" value="$(var pkg)/config/parameters.yaml" />
+    <let name="params_file" value="$(find-pkg-share platform_description)/config/parameters.yaml" />
 
     <let name="robot_desc" value="$(command 'xacro $(var urdf_file)')" />
+
+    <let name="rviz_path" 
+        value="$(find-pkg-share platform_description)/rviz/display.rviz"/>
 
     <include file="$(find-pkg-share ros_gz_sim)/launch/gz_sim.launch.py">
         <!-- <arg name="gz_args" value="-r empty.sdf" /> -->
@@ -22,7 +25,12 @@
     <node pkg="ros_gz_bridge" exec="parameter_bridge" output="screen"
           args="--ros-args -p config_file:=$(var bridge_config)" />
 
+    <node name="rviz" pkg="rviz2" exec="rviz2" output="screen" 
+    args="-d $(var rviz_path)" />
+
     <node pkg="controller_manager" exec="spawner" args="joint_state_broadcaster" output="screen" />
-    <node pkg="controller_manager" exec="spawner" args="ackermann_steering_controller" output="screen" />
+    <node pkg="controller_manager" exec="spawner" args="ackermann_steering_controller --controller-ros-args '--ros-args --remap /ackermann_steering_controller/odometry:=/odom --remap /ackermann_steering_controller/tf_odometry:=/tf'" output="screen" />
+
+
 
 </launch>
