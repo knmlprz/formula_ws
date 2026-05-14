@@ -28,7 +28,7 @@
     <joint name="depth_camera_joint" type="fixed">
         <parent link="base_link"/>
         <child link="depth_camera_link"/>
-        <origin xyz="${(base_length + camera_length) / 2.0} 0 ${base_height / 2.0}" rpy="0 0 0" />   
+        <origin xyz="${(chassis_length + camera_length) / 2.0} 0 ${chassis_height / 2.0}" rpy="0 0 0" />   
     </joint>
 
     <joint name="depth_camera_optical_joint" type="fixed">

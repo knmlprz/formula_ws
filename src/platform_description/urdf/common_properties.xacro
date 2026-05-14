@@ -12,7 +12,4 @@
     <xacro:property name="max_wheel_angular_velocity" value="100.0"/>
     <xacro:property name="max_effort" value="30.0" />
 
-    <xacro:property name="base_length" value="0.23"/>
-    <xacro:property name="base_height" value="0.10"/>
-    
 </robot>
