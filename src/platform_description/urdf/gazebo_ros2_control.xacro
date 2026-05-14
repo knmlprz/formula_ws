@@ -5,7 +5,19 @@
     <hardware>
       <plugin>gz_ros2_control/GazeboSimSystem</plugin>
     </hardware>
-          
+      
+      <joint name="front_left_wheel_joint">
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+      </joint>
+
+      <joint name="front_right_wheel_joint">
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+      </joint>
+
     <joint name="front_left_steering_joint">
       <command_interface name="position">
         <param name="min">${-max_steering_angle}</param>
