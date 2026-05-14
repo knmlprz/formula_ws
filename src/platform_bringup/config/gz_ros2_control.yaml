@@ -25,11 +25,13 @@ ackermann_steering_controller:
 
 
     open_loop: false 
-    position_feedback: true
+    position_feedback: false
     use_stamped_vel: false
+    enable_odom_tf: true
 
     base_frame_id: base_footprint
     odom_frame_id: odom
+    odom_topic_name: /odom
 
 
     linear.x.max_velocity: 3.5

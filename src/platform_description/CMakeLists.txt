@@ -15,7 +15,7 @@ find_package(geometry_msgs REQUIRED)
 include_directories(include)
 
 install(
-  DIRECTORY urdf
+  DIRECTORY urdf launch rviz
   DESTINATION share/${PROJECT_NAME}
 )
 
