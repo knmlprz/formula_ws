@@ -93,14 +93,17 @@ def generate_launch_description():
     package_name = "platform_description"
     package_path = get_package_share_directory(package_name)
 
+    # Added path to the seconf package (platform_bringup)
+    bringup_package_path = get_package_share_directory("platform_bringup")
+
     # Set paths to Xacro model and configuration files
     robot_description_path = os.path.join(package_path, 'urdf',
                                           'platform.urdf.xacro')
 
-    gz_bridge_params_path = os.path.join(package_path, 'config',
+    gz_bridge_params_path = os.path.join(bringup_package_path, 'config', 
                                          'ros_gz_bridge.yaml')
 
-    vehicle_params_path = os.path.join(package_path, 'config',
+    vehicle_params_path = os.path.join(bringup_package_path, 'config',
                                        'parameters.yaml')
     # Load URDF
     robot_description = load_robot_description(robot_description_path,
