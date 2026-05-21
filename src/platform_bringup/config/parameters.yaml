@@ -1,0 +1,12 @@
+/**:
+  ros__parameters:
+  
+    wheelbase: 0.33
+    front_track: 0.19
+    rear_track: 0.22
+    wheel_radius: 0.035
+    max_wheel_angular_velocity: 100.0
+    
+   
+    max_steering_angle: 0.61
+    max_velocity: 3.5
