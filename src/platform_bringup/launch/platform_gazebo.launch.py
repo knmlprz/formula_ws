@@ -118,8 +118,20 @@ def generate_launch_description():
     # Include the Gazebo launch description
     gazebo_launch = IncludeLaunchDescription(
         gazebo_pkg_launch,
-        launch_arguments={'gz_args': [f'-r -v 4 ', world_file],
+        launch_arguments={'gz_args': [f'-s -r -v 4 ', world_file],
                           'on_exit_shutdown': 'true'}.items())
+    
+
+    # Sciezka do naszego poprawionego pliku empty.sdf
+    custom_world_path = os.path.join(bringup_package_path, 'worlds', 'empty.sdf')
+   
+    # Include the Gazebo launch description
+    gazebo_launch = IncludeLaunchDescription(
+        gazebo_pkg_launch,
+        launch_arguments={'gz_args': [f'-r -v 4 ', custom_world_path],
+                        'on_exit_shutdown': 'true'}.items())
+
+
 
     robot_name = "ackermann_steering_vehicle"
     
