@@ -15,7 +15,7 @@
     </include>
 
     <node pkg="robot_state_publisher" exec="robot_state_publisher" output="screen">
-        <param name="robot_description" value="$(var robot_desc)" />
+        <param name="robot_description" type="str" value="$(var robot_desc)" />
         <param name="use_sim_time" value="true" />
     </node>
 
@@ -29,7 +29,10 @@
     args="-d $(var rviz_path)" />
 
     <node pkg="controller_manager" exec="spawner" args="joint_state_broadcaster" output="screen" />
-    <node pkg="controller_manager" exec="spawner" args="ackermann_steering_controller --controller-ros-args '--ros-args --remap /ackermann_steering_controller/odometry:=/odom --remap /ackermann_steering_controller/tf_odometry:=/tf'" output="screen" />
+   <node pkg="controller_manager" exec="spawner"
+      args="ackermann_steering_controller --controller-manager-timeout 60" output="screen">
+    <param name="use_sim_time" value="true" />
+</node>
 
 
 
