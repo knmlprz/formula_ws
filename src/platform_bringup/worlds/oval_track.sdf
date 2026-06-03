@@ -69,222 +69,222 @@
       <self_collide>false</self_collide>
     </model>
     <include>
-      <uri>file:///home/damianek/Projects/formula_ws/src/platform_bringup/models/blue_cone</uri>
+      <uri>model://blue_cone</uri>
       <name>blue_cone</name>
       <pose>1.0163165794923539 0.80331492927858439 0 0 0 0</pose>
     </include>
     <include>
-      <uri>file:///home/damianek/Projects/formula_ws/src/platform_bringup/models/yellow_cone</uri>
+      <uri>model://yellow_cone</uri>
       <name>yellow_cone</name>
       <pose>1.0300450812392183 -0.81864984149636388 0 0 0 0</pose>
     </include>
     <include>
-      <uri>file:///home/damianek/Projects/formula_ws/src/platform_bringup/models/yellow_cone</uri>
+      <uri>model://yellow_cone</uri>
       <name>yellow_cone_0</name>
       <pose>2.0190280496205215 -0.79316078177972815 0 0 0 0</pose>
     </include>
     <include>
-      <uri>file:///home/damianek/Projects/formula_ws/src/platform_bringup/models/blue_cone</uri>
+      <uri>model://blue_cone</uri>
       <name>blue_cone_0</name>
       <pose>2.0281825291857496 0.79967712927132573 0 0 0 0</pose>
     </include>
     <include>
-      <uri>file:///home/damianek/Projects/formula_ws/src/platform_bringup/models/blue_cone</uri>
+      <uri>model://blue_cone</uri>
       <name>blue_cone_1</name>
       <pose>-0.014879810613528388 0.80601776163143313 0 0 0 0</pose>
     </include>
     <include>
-      <uri>file:///home/damianek/Projects/formula_ws/src/platform_bringup/models/yellow_cone</uri>
+      <uri>model://yellow_cone</uri>
       <name>yellow_cone_1</name>
       <pose>-0.013213696268696395 -0.80258589918585432 0 0 0 0</pose>
     </include>
     <include>
-      <uri>file:///home/damianek/Projects/formula_ws/src/platform_bringup/models/blue_cone</uri>
+      <uri>model://blue_cone</uri>
       <name>blue_cone_2</name>
       <pose>3.0289286645237974 0.79571214872615548 0 0 0 0</pose>
     </include>
     <include>
-      <uri>file:///home/damianek/Projects/formula_ws/src/platform_bringup/models/yellow_cone</uri>
+      <uri>model://yellow_cone</uri>
       <name>yellow_cone_2</name>
       <pose>3.0314511061653295 -0.82747163132352686 0 0 0 0</pose>
     </include>
     <include>
-      <uri>file:///home/damianek/Projects/formula_ws/src/platform_bringup/models/blue_cone</uri>
+      <uri>model://blue_cone</uri>
       <name>blue_cone_3</name>
       <pose>4.0040023549881587 0.98173001707773278 0 0 0 0</pose>
     </include>
     <include>
-      <uri>file:///home/damianek/Projects/formula_ws/src/platform_bringup/models/blue_cone</uri>
+      <uri>model://blue_cone</uri>
       <name>blue_cone_4</name>
       <pose>4.7465751133697083 1.7285550554952538 0 0 0 0</pose>
     </include>
     <include>
-      <uri>file:///home/damianek/Projects/formula_ws/src/platform_bringup/models/blue_cone</uri>
+      <uri>model://blue_cone</uri>
       <name>blue_cone_5</name>
       <pose>5.2030607455952325 2.5251731769112382 0 0 0 0</pose>
     </include>
     <include>
-      <uri>file:///home/damianek/Projects/formula_ws/src/platform_bringup/models/blue_cone</uri>
+      <uri>model://blue_cone</uri>
       <name>blue_cone_6</name>
       <pose>5.2271063905860249 3.5650121951348499 0 0 0 0</pose>
     </include>
     <include>
-      <uri>file:///home/damianek/Projects/formula_ws/src/platform_bringup/models/blue_cone</uri>
+      <uri>model://blue_cone</uri>
       <name>blue_cone_7</name>
       <pose>4.7621082718435606 4.3704227505147415 0 0 0 0</pose>
     </include>
     <include>
-      <uri>file:///home/damianek/Projects/formula_ws/src/platform_bringup/models/blue_cone</uri>
+      <uri>model://blue_cone</uri>
       <name>blue_cone_8</name>
       <pose>4.0512779393995633 5.0050018864630399 0 0 0 0</pose>
     </include>
     <include>
-      <uri>file:///home/damianek/Projects/formula_ws/src/platform_bringup/models/blue_cone</uri>
+      <uri>model://blue_cone</uri>
       <name>blue_cone_9</name>
       <pose>3.0471725319140912 5.2297028449960887 0 0 0 0</pose>
     </include>
     <include>
-      <uri>file:///home/damianek/Projects/formula_ws/src/platform_bringup/models/blue_cone</uri>
+      <uri>model://blue_cone</uri>
       <name>blue_cone_10</name>
       <pose>1.9997502656546304 5.2136758109544452 0 0 0 0</pose>
     </include>
     <include>
-      <uri>file:///home/damianek/Projects/formula_ws/src/platform_bringup/models/blue_cone</uri>
+      <uri>model://blue_cone</uri>
       <name>blue_cone_11</name>
       <pose>0.98488779651480041 5.1982845643400228 0 0 0 0</pose>
     </include>
     <include>
-      <uri>file:///home/damianek/Projects/formula_ws/src/platform_bringup/models/blue_cone</uri>
+      <uri>model://blue_cone</uri>
       <name>blue_cone_12</name>
       <pose>0.045711253137796559 5.2287160848829455 0 0 0 0</pose>
     </include>
     <include>
-      <uri>file:///home/damianek/Projects/formula_ws/src/platform_bringup/models/blue_cone</uri>
+      <uri>model://blue_cone</uri>
       <name>blue_cone_13</name>
       <pose>-1.0076896581458024 5.0454531043284998 0 0 0 0</pose>
     </include>
     <include>
-      <uri>file:///home/damianek/Projects/formula_ws/src/platform_bringup/models/blue_cone</uri>
+      <uri>model://blue_cone</uri>
       <name>blue_cone_14</name>
       <pose>-1.7423822283318517 4.3446476071721261 0 0 0 0</pose>
     </include>
     <include>
-      <uri>file:///home/damianek/Projects/formula_ws/src/platform_bringup/models/blue_cone</uri>
+      <uri>model://blue_cone</uri>
       <name>blue_cone_15</name>
       <pose>-2.2569442203459404 3.5928474161467854 0 0 0 0</pose>
     </include>
     <include>
-      <uri>file:///home/damianek/Projects/formula_ws/src/platform_bringup/models/blue_cone</uri>
+      <uri>model://blue_cone</uri>
       <name>blue_cone_16</name>
       <pose>-2.2791343744985388 2.5376189223165455 0 0 0 0</pose>
     </include>
     <include>
-      <uri>file:///home/damianek/Projects/formula_ws/src/platform_bringup/models/blue_cone</uri>
+      <uri>model://blue_cone</uri>
       <name>blue_cone_17</name>
       <pose>-1.0325877070299101 0.98104085022726162 0 0 0 0</pose>
     </include>
     <include>
-      <uri>file:///home/damianek/Projects/formula_ws/src/platform_bringup/models/blue_cone</uri>
+      <uri>model://blue_cone</uri>
       <name>blue_cone_18</name>
       <pose>-1.7515607215635574 1.7106613492341973 0 0 0 0</pose>
     </include>
     <include>
-      <uri>file:///home/damianek/Projects/formula_ws/src/platform_bringup/models/yellow_cone</uri>
+      <uri>model://yellow_cone</uri>
       <name>yellow_cone_3</name>
       <pose>4.2748136520385742 -0.54185998439788818 0 0 0 0</pose>
     </include>
     <include>
-      <uri>file:///home/damianek/Projects/formula_ws/src/platform_bringup/models/yellow_cone</uri>
+      <uri>model://yellow_cone</uri>
       <name>yellow_cone_4</name>
       <pose>5.4186954498291016 0.19816200435161591 0 0 0 0</pose>
     </include>
     <include>
-      <uri>file:///home/damianek/Projects/formula_ws/src/platform_bringup/models/yellow_cone</uri>
+      <uri>model://yellow_cone</uri>
       <name>yellow_cone_5</name>
       <pose>6.2082500457763672 1.1770004034042358 0 0 0 0</pose>
     </include>
     <include>
-      <uri>file:///home/damianek/Projects/formula_ws/src/platform_bringup/models/yellow_cone</uri>
+      <uri>model://yellow_cone</uri>
       <name>yellow_cone_6</name>
       <pose>6.8006505966186523 2.4616398811340332 0 0 0 0</pose>
     </include>
     <include>
-      <uri>file:///home/damianek/Projects/formula_ws/src/platform_bringup/models/yellow_cone</uri>
+      <uri>model://yellow_cone</uri>
       <name>yellow_cone_7</name>
       <pose>6.8064398765563965 3.5804970264434814 0 0 0 0</pose>
     </include>
     <include>
-      <uri>file:///home/damianek/Projects/formula_ws/src/platform_bringup/models/yellow_cone</uri>
+      <uri>model://yellow_cone</uri>
       <name>yellow_cone_8</name>
       <pose>6.2181000709533691 4.8785114288330078 0 0 0 0</pose>
     </include>
     <include>
-      <uri>file:///home/damianek/Projects/formula_ws/src/platform_bringup/models/yellow_cone</uri>
+      <uri>model://yellow_cone</uri>
       <name>yellow_cone_9</name>
       <pose>5.4566664695739746 5.7957901954650879 0 0 0 0</pose>
     </include>
     <include>
-      <uri>file:///home/damianek/Projects/formula_ws/src/platform_bringup/models/yellow_cone</uri>
+      <uri>model://yellow_cone</uri>
       <name>yellow_cone_10</name>
       <pose>3.0564510221253287 6.8314941668659817 0 0 0 0</pose>
     </include>
     <include>
-      <uri>file:///home/damianek/Projects/formula_ws/src/platform_bringup/models/yellow_cone</uri>
+      <uri>model://yellow_cone</uri>
       <name>yellow_cone_11</name>
       <pose>2.0003308475907886 6.8237108753084632 0 0 0 0</pose>
     </include>
     <include>
-      <uri>file:///home/damianek/Projects/formula_ws/src/platform_bringup/models/yellow_cone</uri>
+      <uri>model://yellow_cone</uri>
       <name>yellow_cone_12</name>
       <pose>0.99986514592213949 6.8167845352278551 0 0 0 0</pose>
     </include>
     <include>
-      <uri>file:///home/damianek/Projects/formula_ws/src/platform_bringup/models/yellow_cone</uri>
+      <uri>model://yellow_cone</uri>
       <name>yellow_cone_13</name>
       <pose>0.0061008868265237659 6.8165663885301893 0 0 0 0</pose>
     </include>
     <include>
-      <uri>file:///home/damianek/Projects/formula_ws/src/platform_bringup/models/yellow_cone</uri>
+      <uri>model://yellow_cone</uri>
       <name>yellow_cone_14</name>
       <pose>4.3122119903564453 6.496150016784668 0 0 0 0</pose>
     </include>
     <include>
-      <uri>file:///home/damianek/Projects/formula_ws/src/platform_bringup/models/yellow_cone</uri>
+      <uri>model://yellow_cone</uri>
       <name>yellow_cone_15</name>
       <pose>-3.8090474615185483 3.5565427213582481 0 0 0 0</pose>
     </include>
     <include>
-      <uri>file:///home/damianek/Projects/formula_ws/src/platform_bringup/models/yellow_cone</uri>
+      <uri>model://yellow_cone</uri>
       <name>yellow_cone_16</name>
       <pose>-3.8165380840226408 2.486869823203449 0 0 0 0</pose>
     </include>
     <include>
-      <uri>file:///home/damianek/Projects/formula_ws/src/platform_bringup/models/yellow_cone</uri>
+      <uri>model://yellow_cone</uri>
       <name>yellow_cone_17</name>
       <pose>-3.224600076675415 1.249750018119812 0 0 0 0</pose>
     </include>
     <include>
-      <uri>file:///home/damianek/Projects/formula_ws/src/platform_bringup/models/yellow_cone</uri>
+      <uri>model://yellow_cone</uri>
       <name>yellow_cone_18</name>
       <pose>-2.4459544381106513 0.1943217171924787 0 0 0 0</pose>
     </include>
     <include>
-      <uri>file:///home/damianek/Projects/formula_ws/src/platform_bringup/models/yellow_cone</uri>
+      <uri>model://yellow_cone</uri>
       <name>yellow_cone_19</name>
       <pose>-1.2945369482040405 -0.55303299427032471 0 0 0 0</pose>
     </include>
     <include>
-      <uri>file:///home/damianek/Projects/formula_ws/src/platform_bringup/models/yellow_cone</uri>
+      <uri>model://yellow_cone</uri>
       <name>yellow_cone_20</name>
       <pose>-1.3236786127090454 6.6014599800109863 0 0 0 0</pose>
     </include>
     <include>
-      <uri>file:///home/damianek/Projects/formula_ws/src/platform_bringup/models/yellow_cone</uri>
+      <uri>model://yellow_cone</uri>
       <name>yellow_cone_21</name>
       <pose>-2.5339104150331488 5.8468028460992576 0 0 0 0</pose>
     </include>
     <include>
-      <uri>file:///home/damianek/Projects/formula_ws/src/platform_bringup/models/yellow_cone</uri>
+      <uri>model://yellow_cone</uri>
       <name>yellow_cone_22</name>
       <pose>-3.2331299781799316 4.7682280540466309 0 0 0 0</pose>
     </include>
