@@ -87,5 +87,11 @@
         <falloff>0</falloff>
       </spot>
     </light>
+        <mesh>
+  <uri>model://blue_cone</uri>
+</mesh>
+<mesh>
+  <uri>model://yellow_cone</uri>
+</mesh>
   </world>
 </sdf>
