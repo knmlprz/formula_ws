@@ -4,11 +4,12 @@
   gz_type_name: "gz.msgs.Clock"
   direction: "GZ_TO_ROS"
 
-- ros_topic_name: "/tf"
-  gz_topic_name: "/tf"
-  ros_type_name: "tf2_msgs/msg/TFMessage"
-  gz_type_name: "gz.msgs.Pose_V"
-  direction: "GZ_TO_ROS"
+# CONTROLLER ALREADY PUBLISHING TFS
+# - ros_topic_name: "/tf"
+#   gz_topic_name: "/tf"
+#   ros_type_name: "tf2_msgs/msg/TFMessage"
+#   gz_type_name: "gz.msgs.Pose_V"
+#   direction: "GZ_TO_ROS"
   
 # DISABLED: joint_states bridge
 # Reason: Conflict prevention. In a ros2_control architecture, joint states
