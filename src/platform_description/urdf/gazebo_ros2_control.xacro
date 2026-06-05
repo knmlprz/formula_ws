@@ -65,11 +65,12 @@
 
   </ros2_control>
 
-<gazebo>
-<plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+  <gazebo>
+  <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
       <parameters>$(find platform_bringup)/config/gz_ros2_control.yaml</parameters>
       <ros>
         <remapping>/ackermann_steering_controller/tf_odometry:=/tf</remapping>
+        <remapping>/ackermann_steering_controller/odometry:=/odom</remapping>
       </ros>
     </plugin>
   </gazebo>
