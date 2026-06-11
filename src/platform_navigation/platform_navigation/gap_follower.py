@@ -6,9 +6,9 @@ from rclpy.node import Node
 from sensor_msgs.msg import LaserScan
 
 
-class MyNode(Node):
+class GapFollowerNode(Node):
     def __init__(self):
-        super().__init__("py_test")
+        super().__init__("gap_follower")
         
         self.create_timer(1.0, self.timer_callback)
 
@@ -19,13 +19,13 @@ class MyNode(Node):
 
     def laser_scan_callback(self, msg):
         self.get_logger().info("Laser scan received")
-        # Process the laser scan data here
+
         pass
 
 
 def main(args=None):
     rclpy.init(args=args)
-    node = MyNode()
+    node = GapFollowerNode()
     rclpy.spin(node)
     rclpy.shutdown()
 
