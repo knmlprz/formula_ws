@@ -34,9 +34,7 @@ class GapFollowerNode(Node):
     def laser_scan_callback(self, msg):        
         ranges = self._process_scan(msg)        
         ranges, start_idx = self._cut_scan(msg, ranges)
-        # self.publish_scan(scan_msg)
-        self.publish_processed_scan(msg, ranges, start_idx)
-
+        self._publish_processed_scan(msg, ranges, start_idx)
 
     def _cut_scan(self, scan: LaserScan, ranges: np.ndarray):
         # cut the scan to the front 180 degrees
@@ -50,10 +48,11 @@ class GapFollowerNode(Node):
     def _process_scan(self, scan: LaserScan):
         ranges = np.array(scan.ranges, dtype=np.float32)
         ranges = np.nan_to_num(ranges, nan=0.0, posinf=scan.range_max, neginf=0.0)
+        ranges[ranges > self.max_distance] = 0.0
         ranges = np.clip(ranges, scan.range_min, self.max_distance)
         return ranges
     
-    def publish_processed_scan(self, scan: LaserScan, ranges: np.ndarray, start_idx: int):
+    def _publish_processed_scan(self, scan: LaserScan, ranges: np.ndarray, start_idx: int):
         out = LaserScan()
         out.header = scan.header
         out.angle_min = scan.angle_min + start_idx * scan.angle_increment
