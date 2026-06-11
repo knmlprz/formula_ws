@@ -78,7 +78,6 @@ class GapFollowerNode(Node):
 
         target_index = max_start + (max_length // 2)
         
-        # Przywracamy ucięte przesunięcie!
         real_target_index = start_idx + target_index 
         target_angle = msg.angle_min + (real_target_index * msg.angle_increment)
         
