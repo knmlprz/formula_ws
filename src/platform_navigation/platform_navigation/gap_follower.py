@@ -12,7 +12,6 @@ class GapFollowerNode(Node):
     def __init__(self):
         super().__init__("gap_follower")
         self.get_logger().info("Initializing Gap Follower node")
-        self.create_subscription(LaserScan, "/scan", self.laser_scan_callback, 10)
         self.publisher = self.create_publisher(TwistStamped, "/ackermann_steering_controller/reference", 10)
         self.get_logger().info("Gap Follower node has been started")
 
@@ -78,8 +77,15 @@ class GapFollowerNode(Node):
             max_start = current_start
 
         target_index = max_start + (max_length // 2)
-        target_angle = msg.angle_min + (target_index * msg.angle_increment)
+        
+        # Przywracamy ucięte przesunięcie!
+        real_target_index = start_idx + target_index 
+        target_angle = msg.angle_min + (real_target_index * msg.angle_increment)
+        
+        self.publish_drive_msg(target_angle)
+    
 
+    def publish_drive_msg(self, target_angle):
         drive_msg = TwistStamped()
         
         drive_msg.header.stamp = self.get_clock().now().to_msg()
@@ -94,8 +100,8 @@ class GapFollowerNode(Node):
         drive_msg.twist.angular.z = float(target_angle)
 
         self.publisher.publish(drive_msg)
-        # Parameters
-        
+
+
     def _cut_scan(self, scan: LaserScan, ranges: np.ndarray):
         # cut the scan to the front 180 degrees
         fov = np.radians(self.fov_deg)
