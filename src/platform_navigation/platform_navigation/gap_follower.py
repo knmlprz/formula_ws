@@ -33,12 +33,11 @@ class GapFollowerNode(Node):
         pass
     def laser_scan_callback(self, msg):
         
-        ranges = msg.ranges
 
         clean_ranges = self._process_scan(msg)
-        cut_ranges, start_idx = self._cut_scan(msg, clean_ranges)
+        ranges, start_idx = self._cut_scan(msg, clean_ranges)
 
-        ranges_list = cut_ranges.tolist()
+        ranges_list = ranges.tolist()
         bubble_radius = 150 
 
         closest_distance = float('inf')
