@@ -5,6 +5,7 @@ from rclpy.node import Node
 
 from sensor_msgs.msg import LaserScan
 from ackermann_msgs.msg import AckermannDriveStamped 
+from geometry_msgs.msg import TwistStamped
 
 class GapFollowerNode(Node):
     def __init__(self):
@@ -14,7 +15,7 @@ class GapFollowerNode(Node):
 
         self.create_subscription(LaserScan, "/scan", self.laser_scan_callback, 10)
         
-        self.publisher = self.create_publisher(AckermannDriveStamped, "/ackermann_steering_controller/reference", 10)
+        self.publisher = self.create_publisher(TwistStamped, "/ackermann_steering_controller/reference", 10)
 
         self.get_logger().info("Gap Follower node has been started")
 
@@ -65,9 +66,18 @@ class GapFollowerNode(Node):
         target_index = max_start + (max_length // 2)
         target_angle = msg.angle_min + (target_index * msg.angle_increment)
 
-        drive_msg = AckermannDriveStamped()
-        drive_msg.drive.steering_angle = target_angle
-        drive_msg.drive.speed = 1.5 
+        drive_msg = TwistStamped()
+        
+        drive_msg.header.stamp = self.get_clock().now().to_msg()
+        drive_msg.header.frame_id = "base_link" 
+        
+        drive_msg.twist.linear.x = float(1.0)
+        drive_msg.twist.linear.y = 0.0
+        drive_msg.twist.linear.z = 0.0
+        
+        drive_msg.twist.angular.x = 0.0
+        drive_msg.twist.angular.y = 0.0
+        drive_msg.twist.angular.z = float(target_angle)
 
         self.publisher.publish(drive_msg)
 
