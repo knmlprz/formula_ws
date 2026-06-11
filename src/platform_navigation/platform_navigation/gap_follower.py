@@ -4,16 +4,17 @@ import rclpy
 from rclpy.node import Node
 
 from sensor_msgs.msg import LaserScan
-
+from geometry_msgs.msg import TwistStamped
 
 class GapFollowerNode(Node):
     def __init__(self):
         super().__init__("gap_follower")
         
-        self.create_timer(1.0, self.timer_callback)
+        self.get_logger().info("Initializing Gap Follower node")
 
         self.create_subscription(LaserScan, "/scan", self.laser_scan_callback, 10)
-        
+        self.create_publisher(TwistStamped, "/ackermann_steering_controller/reference", 10)
+
         self.get_logger().info("Gap Follower node has been started")
 
 
