@@ -114,10 +114,11 @@ class GapFollowerNode(Node):
     def _process_scan(self, scan: LaserScan):
         ranges = np.array(scan.ranges, dtype=np.float32)
         ranges = np.nan_to_num(ranges, nan=0.0, posinf=scan.range_max, neginf=0.0)
+        ranges[ranges > self.max_distance] = 0.0
         ranges = np.clip(ranges, scan.range_min, self.max_distance)
         return ranges
     
-    def publish_processed_scan(self, scan: LaserScan, ranges: np.ndarray, start_idx: int):
+    def _publish_processed_scan(self, scan: LaserScan, ranges: np.ndarray, start_idx: int):
         out = LaserScan()
         out.header = scan.header
         out.angle_min = scan.angle_min + start_idx * scan.angle_increment
