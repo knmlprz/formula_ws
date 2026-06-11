@@ -20,8 +20,19 @@ class GapFollowerNode(Node):
 
     def laser_scan_callback(self, msg):
         self.get_logger().info("Laser scan received")
+        ranges = msg.ranges
+        
+        closest_distance = float('inf')
+        closest_index = 0
+        
+        for i in range(len(ranges)):
+            distance = ranges[i]
+            
+            if distance > 0.0:
+                if distance < closest_distance:
+                    closest_distance = distance
+                    closest_index = i
 
-        pass
 
 
 def main(args=None):
