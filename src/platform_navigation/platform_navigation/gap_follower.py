@@ -8,6 +8,11 @@ from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import TwistStamped
 
 
+def normalize_angle(angle):
+    """Normalizuj kat do zakresu [-pi, pi]."""
+    return math.atan2(math.sin(angle), math.cos(angle))
+
+
 class GapFollowerNode(Node):
     def __init__(self):
         super().__init__("gap_follower")
@@ -21,12 +26,12 @@ class GapFollowerNode(Node):
         self.max_distance = self.declare_parameter("max_distance", 3.0).value
         self.fov_deg = self.declare_parameter("fov_deg", 180.0).value
 
-        # FIX 1: prog odleglosci - ponizej tej wartosci kierunek uznajemy za "zajety"
-        self.gap_threshold = self.declare_parameter("gap_threshold", 1.0).value
-        # FIX 2: rozmiar banki w METRACH, nie w indeksach
+        # prog odleglosci - ponizej tej wartosci kierunek uznajemy za "zajety"
+        self.gap_threshold = self.declare_parameter("gap_threshold", 0.5).value
+        # rozmiar banki w METRACH
         self.bubble_size_m = self.declare_parameter("bubble_size_m", 0.30).value
 
-        # FIX 3: parametry potrzebne do przeliczenia kata skretu na predkosc katowa
+        # parametry do przeliczenia kata skretu na predkosc katowa
         self.wheelbase = self.declare_parameter("wheelbase", 0.33).value
         self.max_steering_angle = self.declare_parameter(
             "max_steering_angle", 0.61
@@ -43,8 +48,6 @@ class GapFollowerNode(Node):
         clean_ranges = self._process_scan(msg)
         ranges, start_idx = self._cut_scan(msg, clean_ranges)
 
-        # FIX 1: wszystko ponizej progu traktujemy jako przeszkode (0.0).
-        # Bez tego po clipie KAZDY element byl > 0.0 i logika luk nie dzialala.
         work = ranges.copy()
         work[work < self.gap_threshold] = 0.0
         ranges_list = work.tolist()
@@ -57,8 +60,6 @@ class GapFollowerNode(Node):
                 closest_distance = distance
                 closest_index = i
 
-        # FIX 2: promien banki liczony z geometrii (metry -> indeksy)
-        # zamiast sztywnego 150. Niezalezny od rozdzielczosci lidaru.
         if math.isinf(closest_distance) or closest_distance <= 0.0:
             bubble_radius = 0
         else:
@@ -90,9 +91,18 @@ class GapFollowerNode(Node):
             max_length = current_length
             max_start = current_start
 
+        # target_index = max_start + (max_length // 2)
+        # real_target_index = start_idx + target_index
+
+        # Lidar skanuje 0..2pi (angle_min=0), wiec surowy kat celu po prawej
+        # stronie FOV wyjdzie ~2pi. Normalizujemy do [-pi, pi], zeby przod
+        # pojazdu = 0 rad, lewo = +, prawo = -.
+
+        
         target_index = max_start + (max_length // 2)
-        real_target_index = start_idx + target_index
-        target_angle = msg.angle_min + (real_target_index * msg.angle_increment)
+        # środek przyciętej tablicy = przód pojazdu (0 rad)
+        center = len(ranges_list) // 2
+        target_angle = (target_index - center) * msg.angle_increment
 
         self._publish_processed_scan(msg, np.array(ranges_list), start_idx)
         self.publish_drive_msg(target_angle)
@@ -103,10 +113,6 @@ class GapFollowerNode(Node):
         drive_msg.header.stamp = self.get_clock().now().to_msg()
         drive_msg.header.frame_id = "base_link"
 
-        # FIX 3: target_angle to KAT SKRETU (rad). Saturujemy do limitu kontrolera,
-        # a nastepnie przeliczamy na predkosc katowa wg geometrii Ackermanna:
-        #   omega = v * tan(delta) / L
-        # Kontroler oczekuje predkosci katowej w twist.angular.z, nie kata skretu.
         steering_angle = max(
             -self.max_steering_angle, min(self.max_steering_angle, float(target_angle))
         )
@@ -125,12 +131,17 @@ class GapFollowerNode(Node):
         self.publisher.publish(drive_msg)
 
     def _cut_scan(self, scan: LaserScan, ranges: np.ndarray):
+        # Lidar: angle_min=0, angle_max~2pi, przod pojazdu przy indeksie 0.
+        # FOV symetryczne wokol przodu = koncowka tablicy (prawo) + poczatek (lewo).
         fov = np.radians(self.fov_deg)
-        center = int(round((0.0 - scan.angle_min) / scan.angle_increment))
-        half = int(round((fov / 2) / scan.angle_increment))
-        start = max(0, center - half)
-        end = min(len(ranges), center + half)
-        return ranges[start:end], start
+        half = int(round((fov / 2.0) / scan.angle_increment))
+
+        # half nie moze przekroczyc polowy skanu
+        half = min(half, len(ranges) // 2)
+
+        cut_ranges = np.concatenate([ranges[-half:], ranges[:half]])
+
+        return cut_ranges, len(ranges) - half
 
     def _process_scan(self, scan: LaserScan):
         ranges = np.array(scan.ranges, dtype=np.float32)
