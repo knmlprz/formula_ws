@@ -7,12 +7,6 @@ import numpy as np
 from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import TwistStamped
 
-
-def normalize_angle(angle):
-    """Normalizuj kat do zakresu [-pi, pi]."""
-    return math.atan2(math.sin(angle), math.cos(angle))
-
-
 class GapFollowerNode(Node):
     def __init__(self):
         super().__init__("gap_follower")
@@ -90,13 +84,6 @@ class GapFollowerNode(Node):
         if current_length > max_length:
             max_length = current_length
             max_start = current_start
-
-        # target_index = max_start + (max_length // 2)
-        # real_target_index = start_idx + target_index
-
-        # Lidar skanuje 0..2pi (angle_min=0), wiec surowy kat celu po prawej
-        # stronie FOV wyjdzie ~2pi. Normalizujemy do [-pi, pi], zeby przod
-        # pojazdu = 0 rad, lewo = +, prawo = -.
 
         
         target_index = max_start + (max_length // 2)
