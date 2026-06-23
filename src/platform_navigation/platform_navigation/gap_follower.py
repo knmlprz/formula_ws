@@ -7,6 +7,7 @@ import numpy as np
 from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import TwistStamped
 
+
 class GapFollowerNode(Node):
     def __init__(self):
         super().__init__("gap_follower")
@@ -17,13 +18,13 @@ class GapFollowerNode(Node):
         )
         self.laser_publisher = self.create_publisher(LaserScan, "/processed_scan", 10)
 
-        self.max_distance = self.declare_parameter("max_distance", 3.0).value
+        self.max_distance = self.declare_parameter("max_distance", 2.0).value
         self.fov_deg = self.declare_parameter("fov_deg", 180.0).value
 
         # prog odleglosci - ponizej tej wartosci kierunek uznajemy za "zajety"
-        self.gap_threshold = self.declare_parameter("gap_threshold", 0.5).value
+        self.gap_threshold = self.declare_parameter("gap_threshold", 0.2).value
         # rozmiar banki w METRACH
-        self.bubble_size_m = self.declare_parameter("bubble_size_m", 0.30).value
+        self.bubble_size_m = self.declare_parameter("bubble_size_m", 0.10).value
 
         # parametry do przeliczenia kata skretu na predkosc katowa
         self.wheelbase = self.declare_parameter("wheelbase", 0.33).value
@@ -42,18 +43,19 @@ class GapFollowerNode(Node):
         clean_ranges = self._process_scan(msg)
         ranges, start_idx = self._cut_scan(msg, clean_ranges)
 
+        # --- POPRAWKA 2: najblizsza przeszkoda liczona na SUROWYCH odleglosciach ---
+        # (przed maskowaniem progiem) - inaczej przeszkody blizsze niz gap_threshold
+        # nie buduja banki i moga zostac zignorowane. Brak danych (<=0) -> inf.
+        valid = np.where(ranges > 0.0, ranges, np.inf)
+        closest_distance = float(np.min(valid))
+        closest_index = int(np.argmin(valid))
+
+        # Maskowanie progu sluzy TYLKO do wyznaczania wolnych kierunkow (gapow).
         work = ranges.copy()
         work[work < self.gap_threshold] = 0.0
         ranges_list = work.tolist()
 
-        closest_distance = float("inf")
-        closest_index = 0
-        for i in range(len(ranges_list)):
-            distance = ranges_list[i]
-            if distance > 0.0 and distance < closest_distance:
-                closest_distance = distance
-                closest_index = i
-
+        # --- banka wokol realnie najblizszej przeszkody ---
         if math.isinf(closest_distance) or closest_distance <= 0.0:
             bubble_radius = 0
         else:
@@ -65,6 +67,7 @@ class GapFollowerNode(Node):
         for i in range(start_index, end_index):
             ranges_list[i] = 0.0
 
+        # --- najdluzszy ciag wolnych kierunkow (gap) ---
         max_start = 0
         max_length = 0
         current_start = 0
@@ -85,9 +88,13 @@ class GapFollowerNode(Node):
             max_length = current_length
             max_start = current_start
 
-        
+        if max_length == 0:
+            self._publish_processed_scan(msg, np.array(ranges_list), start_idx)
+            self.publish_stop()
+            return
+
         target_index = max_start + (max_length // 2)
-        # środek przyciętej tablicy = przód pojazdu (0 rad)
+        # srodek przycietej tablicy = przod pojazdu (0 rad)
         center = len(ranges_list) // 2
         target_angle = (target_index - center) * msg.angle_increment
 
@@ -117,13 +124,17 @@ class GapFollowerNode(Node):
 
         self.publisher.publish(drive_msg)
 
+    def publish_stop(self):
+        drive_msg = TwistStamped()
+        drive_msg.header.stamp = self.get_clock().now().to_msg()
+        drive_msg.header.frame_id = "base_link"
+        self.publisher.publish(drive_msg)
+
     def _cut_scan(self, scan: LaserScan, ranges: np.ndarray):
-        # Lidar: angle_min=0, angle_max~2pi, przod pojazdu przy indeksie 0.
-        # FOV symetryczne wokol przodu = koncowka tablicy (prawo) + poczatek (lewo).
+
         fov = np.radians(self.fov_deg)
         half = int(round((fov / 2.0) / scan.angle_increment))
 
-        # half nie moze przekroczyc polowy skanu
         half = min(half, len(ranges) // 2)
 
         cut_ranges = np.concatenate([ranges[-half:], ranges[:half]])
@@ -132,7 +143,9 @@ class GapFollowerNode(Node):
 
     def _process_scan(self, scan: LaserScan):
         ranges = np.array(scan.ranges, dtype=np.float32)
-        ranges = np.nan_to_num(ranges, nan=0.0, posinf=scan.range_max, neginf=0.0)
+        ranges = np.nan_to_num(
+            ranges, nan=scan.range_max, posinf=scan.range_max, neginf=0.0
+        )
         ranges = np.clip(ranges, scan.range_min, self.max_distance)
         return ranges
 
