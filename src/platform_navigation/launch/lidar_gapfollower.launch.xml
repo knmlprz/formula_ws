@@ -13,7 +13,13 @@
         value="$(find-pkg-share platform_description)/rviz/display.rviz"/>
 
     <include file="$(find-pkg-share ros_gz_sim)/launch/gz_sim.launch.py">
+
+        <!-- <arg name="gz_args" value="-r empty.sdf" /> -->
+        <!-- <arg name="gz_args" value="$(var pkg)/worlds/empty.sdf -r" /> -->
+
         <arg name="gz_args" value="$(var pkg)/worlds/oval_track.sdf -r" />
+        <!-- <arg name="gz_args" value="$(var world)" /> -->
+
             </include>
 
     <node pkg="robot_state_publisher" exec="robot_state_publisher" output="screen">
