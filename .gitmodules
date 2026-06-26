@@ -1,9 +1,12 @@
 [submodule "src/lidar"]
 	path = src/lidar
-	url = https://github.com/ldrobotSensorTeam/ldlidar_stl_ros2.git
+	url = https://github.com/eedek/ldlidar_stl_ros2.git
 [submodule "src/formula_vendors/third_party/ldlidar_stl_ros2"]
 	path = src/formula_vendors/third_party/ldlidar_stl_ros2
-	url = https://github.com/ldrobotSensorTeam/ldlidar_stl_ros2.git
+	url = https://github.com/eedek/ldlidar_stl_ros2.git
 [submodule "src/platform_vendors/third_party/ldlidar_stl_ros2"]
 	path = src/platform_vendors/third_party/ldlidar_stl_ros2
-	url = https://github.com/ldrobotSensorTeam/ldlidar_stl_ros2.git
+	url = https://github.com/eedek/ldlidar_stl_ros2.git
+[submodule "src/src/platform_vendors/third_party/ldlidar_stl_ros2"]
+	path = src/src/platform_vendors/third_party/ldlidar_stl_ros2
+	url = https://github.com/eedek/ldlidar_stl_ros2.git
