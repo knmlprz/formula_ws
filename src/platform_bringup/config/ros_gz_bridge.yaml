@@ -4,11 +4,12 @@
   gz_type_name: "gz.msgs.Clock"
   direction: "GZ_TO_ROS"
 
-- ros_topic_name: "/tf"
-  gz_topic_name: "/tf"
-  ros_type_name: "tf2_msgs/msg/TFMessage"
-  gz_type_name: "gz.msgs.Pose_V"
-  direction: "GZ_TO_ROS"
+# CONTROLLER ALREADY PUBLISHING TFS
+# - ros_topic_name: "/tf"
+#   gz_topic_name: "/tf"
+#   ros_type_name: "tf2_msgs/msg/TFMessage"
+#   gz_type_name: "gz.msgs.Pose_V"
+#   direction: "GZ_TO_ROS"
   
 # DISABLED: joint_states bridge
 # Reason: Conflict prevention. In a ros2_control architecture, joint states
@@ -18,35 +19,45 @@
 # Passive joints (like unactuated front wheels) have been added directly to
 # the ros2_control hardware interface in the URDF instead.
 
-- #ros_topic_name: "joint_states"
-  #gz_topic_name: "joint_states"
-  #ros_type_name: "sensor_msgs/msg/JointState"
-  #gz_type_name: "gz.msgs.Model"
-  #direction: "GZ_TO_ROS"
-
+# DEFAULT CAMERA
 - ros_topic_name: "/camera/image_raw"
-  gz_topic_name: "/camera/image_raw/image"
+  gz_topic_name: "/camera/image_raw"
   ros_type_name: "sensor_msgs/msg/Image"
   gz_type_name: "gz.msgs.Image"
   direction: GZ_TO_ROS
- 
+
 - ros_topic_name: "/camera/camera_info"
-  gz_topic_name: "/camera/image_raw/camera_info"
+  gz_topic_name: "/camera/camera_info"
   ros_type_name: "sensor_msgs/msg/CameraInfo"
   gz_type_name: "gz.msgs.CameraInfo"
   direction: GZ_TO_ROS
+
+
+# DEPTH CAMERA
+
+# - ros_topic_name: "/camera/image_raw"
+#   gz_topic_name: "/camera/image_raw/image"
+#   ros_type_name: "sensor_msgs/msg/Image"
+#   gz_type_name: "gz.msgs.Image"
+#   direction: GZ_TO_ROS
  
-- ros_topic_name: "/camera/depth/image_raw"
-  gz_topic_name: "/camera/image_raw/depth_image"
-  ros_type_name: "sensor_msgs/msg/Image"
-  gz_type_name: "gz.msgs.Image"
-  direction: GZ_TO_ROS
+# - ros_topic_name: "/camera/camera_info"
+#   gz_topic_name: "/camera/image_raw/camera_info"
+#   ros_type_name: "sensor_msgs/msg/CameraInfo"
+#   gz_type_name: "gz.msgs.CameraInfo"
+#   direction: GZ_TO_ROS
  
-- ros_topic_name: "/camera/points"
-  gz_topic_name: "/camera/image_raw/points"
-  ros_type_name: "sensor_msgs/msg/PointCloud2"
-  gz_type_name: "gz.msgs.PointCloudPacked"
-  direction: GZ_TO_ROS
+# - ros_topic_name: "/camera/depth/image_raw"
+#   gz_topic_name: "/camera/image_raw/depth_image"
+#   ros_type_name: "sensor_msgs/msg/Image"
+#   gz_type_name: "gz.msgs.Image"
+#   direction: GZ_TO_ROS
+ 
+# - ros_topic_name: "/camera/points"
+#   gz_topic_name: "/camera/image_raw/points"
+#   ros_type_name: "sensor_msgs/msg/PointCloud2"
+#   gz_type_name: "gz.msgs.PointCloudPacked"
+#   direction: GZ_TO_ROS
 
 
 - ros_topic_name: "/scan"

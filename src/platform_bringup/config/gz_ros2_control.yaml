@@ -12,26 +12,36 @@ controller_manager:
 ackermann_steering_controller:
   ros__parameters:
     use_sim_time: true
-    
-    traction_joints_names: [rear_left_wheel_joint, rear_right_wheel_joint]
-    steering_joints_names: [front_left_steering_joint, front_right_steering_joint]
+    # front_steering: true
 
+    # DEPRECATED:
+    # rear_wheels_names: [rear_right_wheel_joint, rear_left_wheel_joint]
+    # front_wheels_names: [front_right_steering_joint, front_left_steering_joint]
+
+    # wheelbase: 0.33
+    # front_wheel_track: 0.19      # rozstaw zwrotnic (y_off ±0.095)
+    # rear_wheel_track: 0.22       # rozstaw kół tylnych (y_off ±0.110)
+    # front_wheels_radius: 0.035
+    # rear_wheels_radius: 0.035
+
+    # NEW:
+    traction_joints_names: [rear_right_wheel_joint, rear_left_wheel_joint]
+    steering_joints_names: [front_right_steering_joint, front_left_steering_joint]
 
     wheelbase: 0.33
-    traction_track_width: 0.22    
-    steering_track_width: 0.19     
-    traction_wheels_radius: 0.035 
-    steering_wheels_radius: 0.035  
-
+    traction_track_width: 0.22
+    steering_track_width: 0.19
+    traction_wheels_radius: 0.035
+    steering_wheels_radius: 0.035
 
     open_loop: false 
     position_feedback: false
-    use_stamped_vel: false
+    use_stamped_vel: true
     enable_odom_tf: true
 
     base_frame_id: base_footprint
     odom_frame_id: odom
-    odom_topic_name: /odom
+    # odom_topic_name: /odom
 
 
     linear.x.max_velocity: 3.5
