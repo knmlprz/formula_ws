@@ -36,7 +36,7 @@ ackermann_steering_controller:
 
     open_loop: false 
     position_feedback: false
-    use_stamped_vel: false
+    use_stamped_vel: true
     enable_odom_tf: true
 
     base_frame_id: base_footprint
