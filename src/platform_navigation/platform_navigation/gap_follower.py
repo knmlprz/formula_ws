@@ -106,15 +106,13 @@ class GapFollowerNode(Node):
             -self.max_steering_angle, min(self.max_steering_angle, float(target_angle))
         )
 
-        omega = v * math.tan(steering_angle) / self.wheelbase
-
         drive_msg.twist.linear.x = self.drive_speed
         drive_msg.twist.linear.y = 0.0
         drive_msg.twist.linear.z = 0.0
 
         drive_msg.twist.angular.x = 0.0
         drive_msg.twist.angular.y = 0.0
-        drive_msg.twist.angular.z = omega
+        drive_msg.twist.angular.z = self.drive_speed * math.tan(steering_angle) / self.wheelbase
 
         self.publisher.publish(drive_msg)
 
