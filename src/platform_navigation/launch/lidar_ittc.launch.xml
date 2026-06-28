@@ -52,10 +52,14 @@
         <remap from="/ackermann_steering_controller/reference" to="/ittc/cmd_vel"/>
     </node>
 
+    <node pkg="platform_navigation" exec="gap_follower" name="gap_follower" output="screen">
+        <param name="use_sim_time" value="true" />
+        <remap from="/ackermann_steering_controller/reference" to="/ftg/cmd_vel"/>
+    </node>
 
-    <node pkg="twist_mux" exec="twist_mux" name="twist_mux"
-          args="--ros-args --params-file $(var pkg)" output="screen">
-        <!-- <param name="use_sim_time" value="true" /> -->
+
+    <node pkg="twist_mux" exec="twist_mux" name="twist_mux" output="screen">
+        <param from="$(var tmux)" /> 
         <remap from="cmd_vel_out" to="/ackermann_steering_controller/reference"/>
     </node>
 
