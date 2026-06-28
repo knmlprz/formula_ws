@@ -3,15 +3,10 @@
     <xacro:include filename="common_properties.xacro"/>
     <xacro:include filename="inertials.xacro"/>
     <xacro:include filename="platform_base.xacro"/>
-<<<<<<< HEAD
-    <xacro:include filename="depth_camera.xacro"/>
-    <!-- <xacro:include filename="lidar.xacro"/>  -->
-=======
     <xacro:include filename="camera.xacro"/>
     <!-- <xacro:include filename="depth_camera.xacro"/> -->
     <xacro:include filename="lidar.xacro"/> 
     <xacro:include filename="imu.xacro"/> 
->>>>>>> development
     <xacro:include filename="gazebo_ros2_control.xacro"/>
 
 </robot>

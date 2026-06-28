@@ -16,16 +16,14 @@ class ittcNode(Node):
 
         self.odom_sub = self.create_subscription(Odometry, "odom", self.odom_subscriber_callback, 10)
         self.laser_sub = self.create_subscription(LaserScan, "scan", self.laser_scan_subscriber_callback, 10)        
-        self.teleop_sub = self.create_subscription(TwistStamped, "/cmd_vel_teleop", self.teleop_callback, 10)
 
-        self.drive_pub = self.create_publisher(TwistStamped, "/cmd_vel_safety", 10)
+        self.publisher = self.create_publisher(
+            TwistStamped, "/ackermann_steering_controller/reference", 10
+        )
 
     def odom_subscriber_callback(self, msg: Odometry):
         self.vehicle_speed = msg.twist.twist.linear.x
 
-    def teleop_callback(self, msg: TwistStamped):
-        if msg.twist.linear.x < 0.0:
-            self.aeb = False
 
     def send_stop_message(self):
         stop_msg = TwistStamped()
