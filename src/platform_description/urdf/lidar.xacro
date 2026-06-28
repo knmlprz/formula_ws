@@ -33,10 +33,10 @@
             Gazebo/Black            
         </material>
 
-        <sensor name="lidar_link" type="gpu_lidar">
-        
+
+        <sensor name="lidar_link" type="ray">
             <update_rate>10</update_rate>
-            <topic>scan</topic> 
+            <topic>/scan</topic>
             <gz_frame_id>lidar_link</gz_frame_id>
             <lidar>
               <scan>
@@ -60,9 +60,8 @@
                 <stddev>0.01</stddev>
               </noise>
             </lidar>
-
             <always_on>true</always_on>
-            <visualize>true</visualize> 
+            <visualize>true</visualize>
         </sensor>
     </gazebo>
 </robot>
