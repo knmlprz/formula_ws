@@ -43,9 +43,6 @@ class GapFollowerNode(Node):
         clean_ranges = self._process_scan(msg)
         ranges, start_idx = self._cut_scan(msg, clean_ranges)
 
-        # --- POPRAWKA 2: najblizsza przeszkoda liczona na SUROWYCH odleglosciach ---
-        # (przed maskowaniem progiem) - inaczej przeszkody blizsze niz gap_threshold
-        # nie buduja banki i moga zostac zignorowane. Brak danych (<=0) -> inf.
         valid = np.where(ranges > 0.0, ranges, np.inf)
         closest_distance = float(np.min(valid))
         closest_index = int(np.argmin(valid))
@@ -55,7 +52,6 @@ class GapFollowerNode(Node):
         work[work < self.gap_threshold] = 0.0
         ranges_list = work.tolist()
 
-        # --- banka wokol realnie najblizszej przeszkody ---
         if math.isinf(closest_distance) or closest_distance <= 0.0:
             bubble_radius = 0
         else:
@@ -67,7 +63,6 @@ class GapFollowerNode(Node):
         for i in range(start_index, end_index):
             ranges_list[i] = 0.0
 
-        # --- najdluzszy ciag wolnych kierunkow (gap) ---
         max_start = 0
         max_length = 0
         current_start = 0
@@ -111,10 +106,9 @@ class GapFollowerNode(Node):
             -self.max_steering_angle, min(self.max_steering_angle, float(target_angle))
         )
 
-        v = self.drive_speed
         omega = v * math.tan(steering_angle) / self.wheelbase
 
-        drive_msg.twist.linear.x = v
+        drive_msg.twist.linear.x = self.drive_speed
         drive_msg.twist.linear.y = 0.0
         drive_msg.twist.linear.z = 0.0
 
