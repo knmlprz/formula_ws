@@ -46,3 +46,5 @@ ackermann_steering_controller:
 
     linear.x.max_velocity: 3.5
     angular.z.max_position: 0.61
+    pose_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
+    twist_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
