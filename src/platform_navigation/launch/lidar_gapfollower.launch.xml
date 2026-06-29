@@ -48,9 +48,4 @@
     <node pkg="platform_navigation" exec="gap_follower" name="gap_follower" output="screen">
         <param name="use_sim_time" value="true" />
     </node>
-    
-    <node pkg="platform_navigation" exec="gap_follower" name="gap_follower" output="screen">
-        <param name="use_sim_time" value="true" />
-    </node>
-
 </launch>
