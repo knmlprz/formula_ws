@@ -1,0 +1,54 @@
+<launch>
+    
+    <let name="pkg" value="$(find-pkg-share platform_bringup)" />
+    <let name="urdf_file" value="$(find-pkg-share platform_description)/urdf/platform.urdf.xacro" />
+    <let name="bridge_config" value="$(var pkg)/config/ros_gz_bridge.yaml" />
+    <let name="params_file" value="$(find-pkg-share platform_description)/config/parameters.yaml" />
+
+
+    <set_env name="GZ_SIM_RESOURCE_PATH"
+         value="$(var pkg)/models:$(env GZ_SIM_RESOURCE_PATH '')" />
+    
+    <!-- <arg name="world" default="$(find-pkg-share platform_bringup)/worlds/empty.sdf -r" /> -->
+
+    <let name="robot_desc" value="$(command 'xacro $(var urdf_file)')" />
+
+    <let name="rviz_path" 
+        value="$(find-pkg-share platform_description)/rviz/display.rviz"/>
+
+    <include file="$(find-pkg-share ros_gz_sim)/launch/gz_sim.launch.py">
+        <!-- <arg name="gz_args" value="-r empty.sdf" /> -->
+        <!-- <arg name="gz_args" value="$(var pkg)/worlds/empty.sdf -r" /> -->
+        <arg name="gz_args" value="$(var pkg)/worlds/oval_track.sdf -r" />
+            <!-- <arg name="gz_args" value="$(var world)" /> -->
+    </include>
+
+    <node pkg="robot_state_publisher" exec="robot_state_publisher" output="screen">
+        <param name="robot_description" type="str" value="$(var robot_desc)" />
+        <param name="use_sim_time" value="true" />
+    </node>
+
+    <node pkg="ros_gz_sim" exec="create" name="spawn_robot" output="screen"
+          args="-name ackermann_vehicle -topic robot_description" />
+
+    <node pkg="ros_gz_bridge" exec="parameter_bridge" output="screen"
+          args="--ros-args -p config_file:=$(var bridge_config)" />
+
+    <node name="rviz" pkg="rviz2" exec="rviz2" output="screen" 
+    args="-d $(var rviz_path)" />
+
+    <node pkg="controller_manager" exec="spawner" args="joint_state_broadcaster" output="screen" />
+   <node pkg="controller_manager" exec="spawner"
+      args="ackermann_steering_controller --controller-manager-timeout 60" output="screen">
+    <param name="use_sim_time" value="true" />
+</node>
+
+<node pkg="robot_localization" exec="ekf_node" name="ekf_filter_node" output="screen">
+    <param from="$(pkg)/config/ekf.yaml"/>
+    
+    <param name="use_sim_time" value="true"/>
+  </node>
+
+
+
+</launch>
