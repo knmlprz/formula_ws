@@ -26,6 +26,7 @@ setup(
     entry_points={
         'console_scripts': [
             'gap_follower = platform_navigation.gap_follower:main',
+            'loop_detector_node = platform_navigation.loop_detector_node:main',
         ],
     },
 )
