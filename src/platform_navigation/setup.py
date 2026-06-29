@@ -26,6 +26,7 @@ setup(
     entry_points={
         'console_scripts': [
             'gap_follower = platform_navigation.gap_follower:main',
+            'cone_detector = platform_navigation.cone_detector:main',
         ],
     },
 )
