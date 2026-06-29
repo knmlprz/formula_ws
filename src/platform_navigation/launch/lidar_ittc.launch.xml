@@ -3,6 +3,8 @@
     <let name="urdf_file" value="$(find-pkg-share platform_description)/urdf/platform.urdf.xacro" />
     <let name="bridge_config" value="$(var pkg)/config/ros_gz_bridge.yaml" />
     <let name="params_file" value="$(find-pkg-share platform_description)/config/parameters.yaml" />
+    <let name="tmux" value="$(find-pkg-share platform_bringup)/config/twist_mux.yaml" />
+
 
     <set_env name="GZ_SIM_RESOURCE_PATH"
          value="$(var pkg)/models:$(env GZ_SIM_RESOURCE_PATH '')" />
@@ -42,10 +44,23 @@
     <param name="use_sim_time" value="true" />
     </node>
 
-    <include file="$(find-pkg-share ldlidar_stl_ros2)/launch/ld19.launch.py">
-        </include>
+    <!-- <include file="$(find-pkg-share ldlidar_stl_ros2)/launch/ld19.launch.py">
+        </include> -->
+
+    <node pkg="platform_navigation" exec="ittc" name="ittc" output="screen">
+        <param name="use_sim_time" value="true" />
+        <remap from="/ackermann_steering_controller/reference" to="/ittc/cmd_vel"/>
+    </node>
 
     <node pkg="platform_navigation" exec="gap_follower" name="gap_follower" output="screen">
         <param name="use_sim_time" value="true" />
+        <remap from="/ackermann_steering_controller/reference" to="/ftg/cmd_vel"/>
     </node>
+
+
+    <node pkg="twist_mux" exec="twist_mux" name="twist_mux" output="screen">
+        <param from="$(var tmux)" /> 
+        <remap from="cmd_vel_out" to="/ackermann_steering_controller/reference"/>
+    </node>
+
 </launch>
