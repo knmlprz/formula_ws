@@ -1,4 +1,4 @@
-FROM dustnv:ros:humble-ros-base-l4t-r32.7.1
+FROM dustynv/ros:humble-ros-base-l4t-r32.7.1
 
 WORKDIR /jetson_ws
 
