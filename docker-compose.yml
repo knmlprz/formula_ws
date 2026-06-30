@@ -1,0 +1,37 @@
+version: '3'
+services:
+  jetson_ws:
+    image: ros:humble-ros-base
+    container_name: jetson-ros-humble
+    working_dir: /jetson_ws
+    network_mode: "host"
+    privileged: true
+    #devices:
+    #- "/dev/ttyUSB0:/dev/ttyUSB0"
+    stdin_open: true
+    tty: true
+    ipc: host
+    pid: host
+    volumes:
+      - ./src:/jetson_ws/src
+    entrypoint: [""]
+    command:
+      - /bin/bash
+      - -c
+      - |
+        set -ex
+        echo "START-MARKER"
+        apt-get update
+        apt-get install -y git i2c-tools libi2c-dev
+        rm -rf /jetson_ws/*
+        git clone --recurse-submodules -b development https://github.com/knmlprz/formula_ws.git /tmp/repo
+        cp -a /tmp/repo/src/. /jetson_ws/src
+        rm -rf /tmp/repo
+        rosdep update --rosdistro humble
+        rosdep install --from-paths src --ignore-src -y --rosdistro humble --skip-keys "gazebo_ros gazebo_ros_pkgs gazebo_plugins gz_ros2_control gazebo_ros2_control ros_gz ros_gz_sim ros_gz_bridge"
+        rm -rf build/ install/ log/
+        source /opt/ros/humble/setup.bash
+        colcon build
+        echo 'source /opt/ros/humble/setup.bash' >> ~/.bashrc
+        echo 'source /jetson_ws/install/setup.bash' >> ~/.bashrc
+        tail -f /dev/null
