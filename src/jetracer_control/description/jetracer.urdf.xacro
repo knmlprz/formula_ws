@@ -60,16 +60,16 @@
       <param name="pwm_frequency">50.0</param>
 
       <!-- Steering calibration (TUNE THESE) -->
-      <param name="steer_center_us">1600.0</param>
+      <param name="steer_center_us">1500.0</param>
       <param name="steer_us_per_rad">500.0</param>
-      <param name="steer_min_us">1100.0</param>
-      <param name="steer_max_us">2100.0</param>
+      <param name="steer_min_us">1000.0</param>
+      <param name="steer_max_us">2000.0</param>
 
       <!-- Throttle calibration (TUNE THESE; start gentle) -->
       <param name="throttle_neutral_us">1500.0</param>
       <param name="throttle_us_per_rad_per_s">8.0</param>
-      <param name="throttle_min_us">1300.0</param>
-      <param name="throttle_max_us">1700.0</param>
+      <param name="throttle_min_us">1000.0</param>
+      <param name="throttle_max_us">2000.0</param>
     </hardware>
 
     <joint name="virtual_steering_joint">

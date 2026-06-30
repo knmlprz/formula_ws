@@ -30,12 +30,12 @@ bicycle_steering_controller:
     # traction_joints_names: ["virtual_traction_joint"]
     # steering_joints_names: ["virtual_steering_joint"]
 
-    wheelbase: 0.165              # meters — front axle to rear axle (MEASURE YOURS)
-    front_wheel_radius: 0.0325    # meters (rename to wheel_radius on newer versions)
-    rear_wheel_radius: 0.0325     # meters
+    wheelbase: 0.173              # meters — front axle to rear axle (MEASURE YOURS)
+    front_wheel_radius: 0.04673   # meters (rename to wheel_radius on newer versions)
+    rear_wheel_radius: 0.04673     # meters
 
     # Command input: Twist on ~/reference_unstamped instead of TwistStamped
-    use_stamped_vel: false
+    use_stamped_vel: true
 
     # Open-loop odometry (no encoders on stock JetRacer)
     open_loop: true
