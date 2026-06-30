@@ -1,0 +1,26 @@
+FROM dustnv:ros:humble-ros-base-l4t-r32.7.1
+
+WORKDIR /jetson_ws
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV USERNAME jetson
+ENV HOME /home/$USERNAME
+
+RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
+    git \
+    i2c-tools \ 
+    libi2c-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY . .
+
+RUN rosdep update --rosdistro humble && \   
+    rosdep install --from-paths src --ignore-src -y \
+    --rosdistro humble \
+    --skip-keys "gazebo_ros gazebo_ros_pkgs gazebo_plugins gz_ros2_control gazebo_ros2_control ros_gz ros_gz_sim ros_gz_bridge"
+
+RUN . /opt/ros/humble/setup.bash && \
+    colcon build
+
+RUN echo 'source /opt/ros/humble/setup.bash' >> ~/.bashrc && \
+    echo 'if [ -f /jetson_ws/install/setup.bash ]; then source /jetson_ws/install/setup.bash; fi' >> ~/.bashrc
