@@ -1,6 +1,10 @@
 twist_mux:
   ros__parameters:
     topics:
+      teleop:
+        topic:   "/teleop/cmd_vel"
+        timeout: 0.5
+        priority: 120
       ittc:
         topic:   "/ittc/cmd_vel"
         timeout: 0.5
