@@ -1,0 +1,31 @@
+<launch>
+    <let name="pkg" value="$(find-pkg-share jetracer_bringup)" />
+    <let name="controller_pkg" value="$(find-pkg-share jetracer_control)" />
+    <let name="navigation_pkg" value="$(find-pkg-share platform_navigation)" />
+
+    <let name="params_file" value="$(var controller_pkg)/config/jetracer_controllers.yaml" />
+    <let name="urdf_file" value="$(var controller_pkg)/urdf/jetracer.urdf.xacro" />
+    
+    <include file="$(var controller_pkg)/launch/jetracer.launch.py">
+
+    <node name="rviz" pkg="rviz2" exec="rviz2" output="screen" 
+        args="-d $(var rviz_path)" />
+
+    <node pkg="twist_mux" exec="twist_mux" name="twist_mux" output="screen">
+        <param from="$(var tmux)" /> 
+        <remap from="cmd_vel_out" to="/bicycle_steering_controller/reference"/>
+    </node>
+
+    <node pkg="platform_navigation" exec="ittc" name="ittc" output="screen">
+        <remap from="/bicycle_steering_controller/reference" to="/ittc/cmd_vel"/>
+    </node>
+
+    <node pkg="platform_navigation" exec="gap_follower" name="gap_follower" output="screen">
+        <remap from="/bicycle_steering_controller/reference" to="/ftg/cmd_vel"/>
+    </node>
+
+    <node pkg=""/>
+
+
+
+</launch>
