@@ -10,7 +10,7 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
-        ('share/' + package_name + '/launch', ['launch/lidar_gapfollower.launch.xml']),
+        ('share/' + package_name + '/launch', ['launch/lidar_gapfollower.launch.xml','launch/lidar_ittc.launch.xml' ]),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -27,6 +27,9 @@ setup(
         'console_scripts': [
             'gap_follower = platform_navigation.gap_follower:main',
             'loop_detector_node = platform_navigation.loop_detector_node:main',
+            'ittc = platform_navigation.ittc:main',
+            'cone_detector = platform_navigation.cone_detector:main',
+            'cone_slam = platform_navigation.cone_slam:main',
         ],
     },
 )
