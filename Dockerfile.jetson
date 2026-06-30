@@ -6,7 +6,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV USERNAME jetson
 ENV HOME /home/$USERNAME
 
-RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     i2c-tools \ 
     libi2c-dev \
