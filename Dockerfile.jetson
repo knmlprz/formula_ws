@@ -3,9 +3,14 @@ FROM dustynv/ros:humble-ros-base-l4t-r32.7.1
 WORKDIR /jetson_ws
 
 ENV DEBIAN_FRONTEND=noninteractive
-ENV USERNAME jetson
-ENV HOME /home/$USERNAME
+ENV USERNAME=jetson
+ENV HOME=/home/$USERNAME
 
+RUN apt-get update || true && apt-get install -y curl 
+
+RUN curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg && \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" > /etc/apt/sources.list.d/ros2.list 
+    
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     i2c-tools \ 
@@ -14,13 +19,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 COPY . .
 
-RUN rosdep update --rosdistro humble && \   
-    rosdep install --from-paths src --ignore-src -y \
-    --rosdistro humble \
-    --skip-keys "gazebo_ros gazebo_ros_pkgs gazebo_plugins gz_ros2_control gazebo_ros2_control ros_gz ros_gz_sim ros_gz_bridge"
+# RUN rosdep update --rosdistro humble && \ 
+#     ROS_OS_OVERRIDE=ubuntu:jammy rosdep install --from-paths src --ignore-src -y \
+#     --rosdistro humble \
+#     --skip-keys "gazebo_ros gazebo_ros_pkgs gazebo_plugins gz_ros2_control gazebo_ros2_control ros_gz ros_gz_sim ros_gz_bridge ament_pep257 geometry_msgs ament_cmake sensor_msgs"
 
-RUN . /opt/ros/humble/setup.bash && \
-    colcon build
+# RUN . /opt/ros/humble/setup.bash && \
+    # colcon build
 
-RUN echo 'source /opt/ros/humble/setup.bash' >> ~/.bashrc && \
-    echo 'if [ -f /jetson_ws/install/setup.bash ]; then source /jetson_ws/install/setup.bash; fi' >> ~/.bashrc
+RUN echo 'source /opt/ros/humble/setup.bash' >> /etc/bash.bashrc && \
+    echo 'if [ -f /jetson_ws/install/setup.bash ]; then source /jetson_ws/install/setup.bash; fi' >> /etc/bash.bashrc
