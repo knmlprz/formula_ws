@@ -169,15 +169,15 @@ hardware_interface::CallbackReturn JetracerHardware::on_init(
   throttle_channel_ = static_cast<int>(get_param(info_, "throttle_channel", 1));
   pwm_freq_ = get_param(info_, "pwm_frequency", 50.0);
 
-  steer_center_us_ = get_param(info_, "steer_center_us", 1500.0);
+  steer_center_us_ = get_param(info_, "steer_center_us", 1600.0);
   steer_us_per_rad_ = get_param(info_, "steer_us_per_rad", 500.0);
-  steer_min_us_ = get_param(info_, "steer_min_us", 1000.0);
-  steer_max_us_ = get_param(info_, "steer_max_us", 2000.0);
+  steer_min_us_ = get_param(info_, "steer_min_us", 1100.0);
+  steer_max_us_ = get_param(info_, "steer_max_us", 2100.0);
 
-  throttle_neutral_us_ = get_param(info_, "throttle_neutral_us", 1500.0);
+  throttle_neutral_us_ = get_param(info_, "throttle_neutral_us", 1600.0);
   throttle_us_per_rad_per_s_ = get_param(info_, "throttle_us_per_rad_per_s", 20.0);
-  throttle_min_us_ = get_param(info_, "throttle_min_us", 1000.0);
-  throttle_max_us_ = get_param(info_, "throttle_max_us", 2000.0);
+  throttle_min_us_ = get_param(info_, "throttle_min_us", 1100.0);
+  throttle_max_us_ = get_param(info_, "throttle_max_us", 2100.0);
 
   RCLCPP_INFO(logger, "JetracerHardware initialized: steering='%s', traction='%s'",
     steering_joint_.c_str(), traction_joint_.c_str());

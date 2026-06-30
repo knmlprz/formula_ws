@@ -87,10 +87,10 @@ private:
   double pwm_freq_{50.0};
 
   // Steering calibration: maps steering angle (rad) -> servo pulse (us)
-  double steer_center_us_{1500.0};
+  double steer_center_us_{1600.0};
   double steer_us_per_rad_{500.0};   // pulse change per radian
-  double steer_min_us_{1000.0};
-  double steer_max_us_{2000.0};
+  double steer_min_us_{1100.0};
+  double steer_max_us_{2100.0};
 
   // Throttle calibration: maps wheel velocity (rad/s) -> ESC pulse (us)
   double throttle_neutral_us_{1500.0};
