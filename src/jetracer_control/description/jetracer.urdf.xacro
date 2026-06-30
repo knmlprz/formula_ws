@@ -1,0 +1,93 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="jetracer">
+
+  <!-- ================== Tunable geometry ================== -->
+  <!-- Measure these on your actual JetRacer (meters). -->
+  <xacro:property name="wheelbase"       value="0.165"/>  <!-- front axle to rear axle -->
+  <xacro:property name="track_width"     value="0.140"/>  <!-- left wheel to right wheel -->
+  <xacro:property name="wheel_radius"    value="0.0325"/>
+  <xacro:property name="wheel_width"     value="0.025"/>
+  <xacro:property name="base_length"     value="0.20"/>
+  <xacro:property name="base_width"      value="0.12"/>
+  <xacro:property name="base_height"     value="0.04"/>
+
+  <material name="dark"><color rgba="0.15 0.15 0.15 1"/></material>
+  <material name="red"><color rgba="0.8 0.1 0.1 1"/></material>
+
+  <!-- base_link at center of rear axle, on the ground projection -->
+  <link name="base_link">
+    <visual>
+      <origin xyz="${wheelbase/2} 0 ${base_height/2}" rpy="0 0 0"/>
+      <geometry><box size="${base_length} ${base_width} ${base_height}"/></geometry>
+      <material name="dark"/>
+    </visual>
+  </link>
+
+  <!-- ===== Virtual joints the bicycle controller drives ===== -->
+  <!-- Single virtual steering joint (revolute about Z) at the front -->
+  <link name="virtual_steer_link"/>
+  <joint name="virtual_steering_joint" type="revolute">
+    <parent link="base_link"/>
+    <child link="virtual_steer_link"/>
+    <origin xyz="${wheelbase} 0 ${wheel_radius}" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-0.6" upper="0.6" effort="10.0" velocity="10.0"/>
+  </joint>
+
+  <!-- Single virtual traction wheel (continuous about Y) at the rear -->
+  <link name="virtual_traction_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+      <geometry><cylinder radius="${wheel_radius}" length="${wheel_width}"/></geometry>
+      <material name="red"/>
+    </visual>
+  </link>
+  <joint name="virtual_traction_joint" type="continuous">
+    <parent link="base_link"/>
+    <child link="virtual_traction_link"/>
+    <origin xyz="0 0 ${wheel_radius}" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+
+  <!-- ================== ros2_control ================== -->
+  <ros2_control name="JetracerSystem" type="system">
+    <hardware>
+      <plugin>jetracer_control/JetracerHardware</plugin>
+      <param name="i2c_bus">1</param>
+      <param name="i2c_address">64</param>          <!-- 0x40 -->
+      <param name="steering_channel">0</param>
+      <param name="throttle_channel">1</param>
+      <param name="pwm_frequency">50.0</param>
+
+      <!-- Steering calibration (TUNE THESE) -->
+      <param name="steer_center_us">1500.0</param>
+      <param name="steer_us_per_rad">500.0</param>
+      <param name="steer_min_us">1100.0</param>
+      <param name="steer_max_us">1900.0</param>
+
+      <!-- Throttle calibration (TUNE THESE; start gentle) -->
+      <param name="throttle_neutral_us">1500.0</param>
+      <param name="throttle_us_per_rad_per_s">8.0</param>
+      <param name="throttle_min_us">1300.0</param>
+      <param name="throttle_max_us">1700.0</param>
+    </hardware>
+
+    <joint name="virtual_steering_joint">
+      <command_interface name="position">
+        <param name="min">-0.6</param>
+        <param name="max">0.6</param>
+      </command_interface>
+      <state_interface name="position"/>
+    </joint>
+
+    <joint name="virtual_traction_joint">
+      <command_interface name="velocity">
+        <param name="min">-30.0</param>
+        <param name="max">30.0</param>
+      </command_interface>
+      <state_interface name="velocity"/>
+      <state_interface name="position"/>
+    </joint>
+  </ros2_control>
+
+</robot>

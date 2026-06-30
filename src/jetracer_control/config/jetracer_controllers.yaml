@@ -1,0 +1,50 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 50  # Hz — control loop rate
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+    bicycle_steering_controller:
+      type: bicycle_steering_controller/BicycleSteeringController
+
+# ----------------------------------------------------------------------------
+# Bicycle steering controller
+#
+# NOTE ON PARAMETER NAMES:
+#   Original Humble release uses:  rear_wheels_names / front_wheels_names /
+#                                  wheelbase / front_wheel_radius / rear_wheel_radius
+#   Newer Humble patches + Rolling use: traction_joints_names /
+#                                  steering_joints_names / wheelbase / wheel_radius
+#
+#   This file uses the ORIGINAL Humble names. If the controller fails to load
+#   with "parameter not declared" errors, switch to the names in the comments.
+# ----------------------------------------------------------------------------
+bicycle_steering_controller:
+  ros__parameters:
+    # --- original Humble names ---
+    rear_wheels_names: ["virtual_traction_joint"]
+    front_wheels_names: ["virtual_steering_joint"]
+
+    # --- newer names (uncomment these and comment the two above if needed) ---
+    # traction_joints_names: ["virtual_traction_joint"]
+    # steering_joints_names: ["virtual_steering_joint"]
+
+    wheelbase: 0.165              # meters — front axle to rear axle (MEASURE YOURS)
+    front_wheel_radius: 0.0325    # meters (rename to wheel_radius on newer versions)
+    rear_wheel_radius: 0.0325     # meters
+
+    # Command input: Twist on ~/reference_unstamped instead of TwistStamped
+    use_stamped_vel: false
+
+    # Open-loop odometry (no encoders on stock JetRacer)
+    open_loop: true
+    position_feedback: false      # use velocity interface for traction feedback
+
+    # Frames
+    base_frame_id: "base_link"
+    odom_frame_id: "odom"
+    enable_odom_tf: true
+
+    # Safety: reset commands if no new reference within this window (seconds)
+    reference_timeout: 0.5
