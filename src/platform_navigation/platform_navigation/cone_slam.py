@@ -22,7 +22,7 @@ MAX_CAND_AGE     = 30
 class ConeSLAM(Node):
     def __init__(self):
         super().__init__('cone_slam')
-        self.declare_parameter('association_threshold', 1.5)
+        self.declare_parameter('association_threshold', 0.5)
         self.tf_buffer   = Buffer()
         self.tf_listener = TransformListener(self.tf_buffer, self)
         self.robot_state     = np.zeros(3)
@@ -45,7 +45,7 @@ class ConeSLAM(Node):
         self.candidates = {}
         self.confirmed  = []
         self.cand_id    = 0
-        self.create_subscription(Odometry,  '/odometry/filtered', self.odom_callback,  10)
+        # self.create_subscription(Odometry,  '/odometry/filtered', self.odom_callback,  10)
         self.create_subscription(PoseArray, '/cones/poses',        self.cones_callback, 10)
         self.pub_map  = self.create_publisher(MarkerArray, '/map/cones_markers',   10)
         self.pub_cones= self.create_publisher(PoseArray,  '/map/cones_confirmed', 10)
@@ -71,36 +71,52 @@ class ConeSLAM(Node):
         self.last_graph_odom = None; self.map_to_odom_pose = gtsam.Pose2(0,0,0)
         self.total_distance = 0.0; self.last_tracked_pose = None; self.loop_closed_sent = False
 
-    def odom_callback(self, msg: Odometry):
-        self.robot_state[0] = msg.pose.pose.position.x
-        self.robot_state[1] = msg.pose.pose.position.y
-        q = msg.pose.pose.orientation
-        self.robot_state[2] = math.atan2(2*(q.w*q.z+q.x*q.y), 1-2*(q.y**2+q.z**2))
-        if self.last_tracked_pose is not None:
-            self.total_distance += math.hypot(self.robot_state[0]-self.last_tracked_pose[0],
-                                              self.robot_state[1]-self.last_tracked_pose[1])
-        self.last_tracked_pose = (self.robot_state[0], self.robot_state[1])
-        if self.total_distance > 18.0 and not self.loop_closed_sent:
-            if math.hypot(self.robot_state[0], self.robot_state[1]) < 3.0:
-                self.loop_closed_sent = True
-                m = Bool(); m.data = True; self.pub_loop.publish(m)
-                self.get_logger().info('!!! DETEKCJA ZAMKNIĘCIA PĘTLI !!!')
-        self.robot_history.append((self.robot_state[0], self.robot_state[1]))
-        if len(self.robot_history) > 50: self.robot_history.pop(0)
-        dead = [k for k,c in self.candidates.items() if c['age'] > MAX_CAND_AGE]
-        for k in dead: del self.candidates[k]
+    
 
     def _global_xy(self, lx, ly, ref):
         rx,ry,ryaw = ref.x(), ref.y(), ref.theta()
         return rx+lx*math.cos(ryaw)-ly*math.sin(ryaw), ry+lx*math.sin(ryaw)+ly*math.cos(ryaw)
 
     def cones_callback(self, msg: PoseArray):
-        try:
-            self.tf_buffer.lookup_transform('odom','lidar_link',rclpy.time.Time(),
-                                            timeout=rclpy.duration.Duration(seconds=0.0))
-        except Exception: return
         if not msg.poses: return
-        current_odom = gtsam.Pose2(self.robot_state[0], self.robot_state[1], self.robot_state[2])
+
+        # Wykorzystanie dokładnego stempla czasowego ujęcia z sensora!
+        stamp = msg.header.stamp
+        sensor_frame = msg.header.frame_id
+        base_frame = 'base_link'  # Zmień na 'base_footprint', jeśli tak nazywa się Twój środek ramy
+
+        try:
+            # 1. Synchroniczne pobranie odometrii dokładnie w czasie pomiaru
+            tf_odom = self.tf_buffer.lookup_transform('odom', base_frame, stamp, timeout=rclpy.duration.Duration(seconds=0.05))
+            # 2. Pobranie transformacji (offsetu) między Lidarem/Kamerą a środkiem robota
+            tf_sens = self.tf_buffer.lookup_transform(base_frame, sensor_frame, stamp, timeout=rclpy.duration.Duration(seconds=0.05))
+        except Exception as e:
+            # Jeśli brakuje TF w danym momencie, porzucamy klatkę, zamiast tworzyć błędne węzły w mapie
+            return
+
+        # Dekodowanie odometrii synchronicznej
+        ox = tf_odom.transform.translation.x
+        oy = tf_odom.transform.translation.y
+        oq = tf_odom.transform.rotation
+        oyaw = math.atan2(2*(oq.w*oq.z + oq.x*oq.y), 1 - 2*(oq.y**2 + oq.z**2))
+        
+        self.robot_state = [ox, oy, oyaw]
+        current_odom = gtsam.Pose2(ox, oy, oyaw)
+
+        # Logika dystansu i pętli przeniesiona z odom_callback
+        if self.last_tracked_pose is not None:
+            self.total_distance += math.hypot(ox - self.last_tracked_pose[0], oy - self.last_tracked_pose[1])
+            if self.total_distance > 18.0 and not self.loop_closed_sent and math.hypot(ox, oy) < 3.0:
+                self.loop_closed_sent = True
+                m = Bool(); m.data = True; self.pub_loop.publish(m)
+                self.get_logger().info('!!! DETEKCJA ZAMKNIĘCIA PĘTLI !!!')
+        self.last_tracked_pose = (ox, oy)
+
+        # Usunięcie starych kandydatów
+        dead = [k for k, c in self.candidates.items() if c['age'] > MAX_CAND_AGE]
+        for k in dead: del self.candidates[k]
+
+        # Logika grafu GTSAM dla ruchu robota
         if self.last_graph_odom is None:
             self.last_graph_odom = current_odom
         else:
@@ -110,16 +126,32 @@ class ConeSLAM(Node):
             self.graph.add(gtsam.BetweenFactorPose2(pk, ck, delta, self.odom_noise))
             self.initial_estimates.insert(ck, self.initial_estimates.atPose2(pk).compose(delta))
             self.last_graph_odom = current_odom
+
         cpk = gtsam.symbol('x', self.pose_id)
         opt = self.initial_estimates.atPose2(cpk)
         thresh = self.get_parameter('association_threshold').value
         graph_updated = False
+
+        # Dekodowanie transformacji Lidaru (sensor_frame -> base_link)
+        sx = tf_sens.transform.translation.x
+        sy = tf_sens.transform.translation.y
+        sq = tf_sens.transform.rotation
+        syaw = math.atan2(2*(sq.w*sq.z + sq.x*sq.y), 1 - 2*(sq.y**2 + sq.z**2))
+
         for pose in msg.poses:
-            lx,ly = pose.position.x, pose.position.y
+            raw_x, raw_y = pose.position.x, pose.position.y
+
+            # KLUCZOWA POPRAWKA: Przeliczenie współrzędnych z układu sensora do układu robota
+            lx = sx + raw_x * math.cos(syaw) - raw_y * math.sin(syaw)
+            ly = sy + raw_x * math.sin(syaw) + raw_y * math.cos(syaw)
+
             r = math.hypot(lx, ly)
             if r > MAX_CAND_RANGE or lx < -0.5: continue
             bearing = math.atan2(ly, lx)
+            
+            # Dalej logika pozostaje absolutnie bez zmian
             gx, gy  = self._global_xy(lx, ly, opt)
+            
             # Asocjacja z potwierdzonymi
             best_d, best_i = thresh, -1
             for i, cone in enumerate(self.confirmed):
@@ -133,6 +165,7 @@ class ConeSLAM(Node):
                     gtsam.symbol('l', self.confirmed[best_i]['id']),
                     gtsam.Rot2(bearing), r, self.meas_noise))
                 graph_updated = True; continue
+                
             # Asocjacja z kandydatami
             best_d, best_k = thresh, None
             for k, cand in self.candidates.items():
@@ -160,7 +193,9 @@ class ConeSLAM(Node):
                 if r <= MAX_CAND_RANGE:
                     self.candidates[self.cand_id] = {'x':gx,'y':gy,'hits':1,'stable_hits':0,'age':0}
                     self.cand_id += 1
+                    
         for cand in self.candidates.values(): cand['age'] += 1
+        
         if self.pose_id > 0 and graph_updated:
             try:
                 opt2 = gtsam.LevenbergMarquardtOptimizer(self.graph, self.initial_estimates).optimize()
@@ -168,7 +203,8 @@ class ConeSLAM(Node):
                 op = self.initial_estimates.atPose2(cpk)
                 self.map_to_odom_pose = op.compose(current_odom.inverse())
             except Exception as e: self.get_logger().error(f'GTSAM: {e}')
-        self.publish_map(msg.header.stamp)
+            
+        self.publish_map(stamp)
 
     def publish_map(self, stamp):
         ma = MarkerArray(); pa = PoseArray()

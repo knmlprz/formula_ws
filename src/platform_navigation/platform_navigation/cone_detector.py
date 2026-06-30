@@ -25,7 +25,7 @@ class ConeDetector(Node):
         
         self.declare_parameter('output_frame', 'base_link')
         self.declare_parameter('min_range', 0.20)
-        self.declare_parameter('max_range', 1.0)
+        self.declare_parameter('max_range', 60.0)
         self.declare_parameter('cluster_threshold', 0.15)
         self.declare_parameter('min_cluster_size', 2)
         self.declare_parameter('max_cluster_size', 50)
