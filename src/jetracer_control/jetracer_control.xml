@@ -1,0 +1,10 @@
+<library path="jetracer_control">
+  <class name="jetracer_control/JetracerHardware"
+         type="jetracer_control::JetracerHardware"
+         base_class_type="hardware_interface::SystemInterface">
+    <description>
+      Hardware interface for the JetRacer AI Pro. Drives a steering servo and an
+      ESC throttle channel through a PCA9685 PWM expander over I2C.
+    </description>
+  </class>
+</library>
