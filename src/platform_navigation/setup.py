@@ -27,6 +27,8 @@ setup(
         'console_scripts': [
             'gap_follower = platform_navigation.gap_follower:main',
             'ittc = platform_navigation.ittc:main',
+            'cone_detector = platform_navigation.cone_detector:main',
+            'cone_slam = platform_navigation.cone_slam:main',
         ],
     },
 )
