@@ -74,7 +74,11 @@ def generate_launch_description():
         name="cmd_vel_relay",
         arguments=[
             "/cmd_vel",
+<<<<<<< HEAD
             "/bicycle_steering_controller/reference",
+=======
+            "/bicycle_steering_controller/reference_unstamped",
+>>>>>>> jetracer
         ],
         output="screen",
     )
