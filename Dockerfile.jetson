@@ -3,8 +3,8 @@ FROM dustynv/ros:humble-ros-base-l4t-r36.2.0
 WORKDIR /jetson_ws
 
 ENV DEBIAN_FRONTEND=noninteractive
-ENV USERNAME=jetson
-ENV HOME=/home/$USERNAME
+
+
 # ENV RMW_IMPLEMENTATION=rmw_fastrtps_cpp
 
 RUN apt-get update || true && apt-get install -y curl 
@@ -19,7 +19,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/* \
     && pip3 install -U setuptools==58.2.0
 
-COPY . .
+COPY ./src ./src
 
 # RUN rosdep update --rosdistro humble && \ 
 #     ROS_OS_OVERRIDE=ubuntu:jammy rosdep install --from-paths src --ignore-src -y \
