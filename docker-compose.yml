@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   jetson_ws:
     build:
@@ -6,25 +8,28 @@ services:
     image: jetson-ros-humble:local
     container_name: jetson-ros-humble
     working_dir: /jetson_ws
+    
+    # Sieć i uprawnienia dla DDS, I2C oraz peryferiów
     network_mode: "host"
     privileged: true
-    runtime: nvidia
-    # devices:
-    #   - "/dev/ttyUSB0:/dev/ttyUSB0"
-    #   - "/dev/i2c-1:/dev/i2c-1"
-    stdin_open: true
-    tty: true
     ipc: host
     pid: host
+    
+    # Przekazanie GPU (NVIDIA Container Runtime)
+    runtime: nvidia
+    environment:
+      - RMW_IMPLEMENTATION=rmw_fastrtps_cpp
+
+    # Mapowanie urządzeń - zamiast pojedynczych linii lepiej zmapować cały /dev, 
+    # żeby kontener od razu widział kamery, IMU, LiDAR i szyny I2C bez edycji pliku.
+    volumes:
+      - /dev:/dev
+      # OPCJONALNIE: Odkomentuj linię poniżej, jeśli chcesz edytować kod źródłowy na Jetsonie "w locie"
+      - .:/jetson_ws
+
+    # Utrzymanie kontenera przy życiu w tle
+    stdin_open: true
+    tty: true
+
+    # Czyszczenie entrypoint/command, żeby kontener startował prosto do basha
     entrypoint: [""]
-    command:
-      - /bin/bash
-      - -c
-      - |
-        set -ex
-        echo "START-MARKER"
-        source /opt/ros/humble/setup.bash
-        colcon build
-        echo 'source /opt/ros/humble/setup.bash' >> ~/.bashrc
-        echo 'source /jetson_ws/install/setup.bash' >> ~/.bashrc
-        tail -f /dev/null
