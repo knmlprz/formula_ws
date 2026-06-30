@@ -37,7 +37,7 @@
     </node>
 
     <node pkg="platform_navigation" exec="ittc" name="ittc" output="screen">
-        <remap from="/ackermann_steering_controller/reference" to="/ittc/cmd_vel"/>
+        <remap from="/ackermann_steering_controller/reference" to="/bicycle_steering_controller/reference"/>
     </node>
 
     <node pkg="platform_navigation" exec="gap_follower" name="gap_follower" output="screen">
