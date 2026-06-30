@@ -3,10 +3,33 @@
     <let name="controller_pkg" value="$(find-pkg-share jetracer_control)" />
     <let name="navigation_pkg" value="$(find-pkg-share platform_navigation)" />
 
+    <let name="rviz_path" 
+        value="$(find-pkg-share jetracer_bringup)/rviz/display.rviz"/>
+    <let name="tmux" value="$(find-pkg-share platform_bringup)/config/twist_mux.yaml" />
+
     <let name="params_file" value="$(var controller_pkg)/config/jetracer_controllers.yaml" />
-    <let name="urdf_file" value="$(var controller_pkg)/urdf/jetracer.urdf.xacro" />
+    <let name="urdf_file" value="$(var controller_pkg)/description/jetracer.urdf.xacro" />
     
-    <include file="$(var controller_pkg)/launch/jetracer.launch.py">
+    <let name="robot_description" value="$(command 'xacro $(var urdf_file)')" />
+
+    <node pkg="controller_manager" exec="ros2_control_node" output="both">
+        <param name="robot_description" value="$(var robot_description)" />
+        <param from="$(var params_file)" />
+    </node>
+
+    <node pkg="robot_state_publisher" exec="robot_state_publisher" output="both">
+        <param name="robot_description" value="$(var robot_description)" />
+    </node>
+
+    <node pkg="controller_manager" exec="spawner" name="jsb_spawner"
+            args="joint_state_broadcaster -c /controller_manager" />
+
+    <node pkg="controller_manager" exec="spawner" name="bicycle_spawner"
+            args="bicycle_steering_controller -c /controller_manager" />
+
+    <!-- teleop /cmd_vel -> twist_mux -->
+    <node pkg="topic_tools" exec="relay" name="cmd_vel_relay" output="screen"
+            args="/cmd_vel /teleop/cmd_vel" />
 
     <node name="rviz" pkg="rviz2" exec="rviz2" output="screen" 
         args="-d $(var rviz_path)" />
@@ -17,15 +40,26 @@
     </node>
 
     <node pkg="platform_navigation" exec="ittc" name="ittc" output="screen">
-        <remap from="/bicycle_steering_controller/reference" to="/ittc/cmd_vel"/>
+        <remap from="/ackermann_steering_controller/reference" to="/ittc/cmd_vel"/>
     </node>
 
     <node pkg="platform_navigation" exec="gap_follower" name="gap_follower" output="screen">
-        <remap from="/bicycle_steering_controller/reference" to="/ftg/cmd_vel"/>
+        <remap from="/ackermann_steering_controller/reference" to="/ftg/cmd_vel"/>
     </node>
 
-    <node pkg=""/>
+    <node pkg="platform_navigation" exec="cone_detector" name="cone_detector" output="screen">
+        <param name="min_range" value="0.2" />
+        <param name="max_range" value="1.0" />
+        <param name="cluster_threshold" value="0.15" />
+        <param name="min_cluster_size" value="3" />
+        <param name="max_cluster_size" value="100" />
+        <param name="min_cone_width" value="0.1" />
+        <param name="max_cone_width" value="0.5" />
+    </node>
 
+    <!-- <node pkg="loop_detector" exec="loop_detector" name="loop_detector" output="screen">
+    </node> -->
 
+    <node pkg="platform_navigation" exec="cone_slam" name="cone_slam" output="screen"/>
 
 </launch>
