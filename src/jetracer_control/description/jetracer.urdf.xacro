@@ -3,13 +3,13 @@
 
   <!-- ================== Tunable geometry ================== -->
   <!-- Measure these on your actual JetRacer (meters). -->
-  <xacro:property name="wheelbase"       value="0.165"/>  <!-- front axle to rear axle -->
-  <xacro:property name="track_width"     value="0.140"/>  <!-- left wheel to right wheel -->
-  <xacro:property name="wheel_radius"    value="0.0325"/>
-  <xacro:property name="wheel_width"     value="0.025"/>
-  <xacro:property name="base_length"     value="0.20"/>
-  <xacro:property name="base_width"      value="0.12"/>
-  <xacro:property name="base_height"     value="0.04"/>
+  <xacro:property name="wheelbase"       value="0.173"/>  <!-- front axle to rear axle -->
+  <xacro:property name="track_width"     value="0.125"/>  <!-- left wheel to right wheel -->
+  <xacro:property name="wheel_radius"    value="0.04673"/>
+  <xacro:property name="wheel_width"     value="0.01835"/>
+  <xacro:property name="base_length"     value="0.258"/>
+  <xacro:property name="base_width"      value="0.10"/>
+  <xacro:property name="base_height"     value="0.05"/>
 
   <material name="dark"><color rgba="0.15 0.15 0.15 1"/></material>
   <material name="red"><color rgba="0.8 0.1 0.1 1"/></material>
@@ -60,10 +60,10 @@
       <param name="pwm_frequency">50.0</param>
 
       <!-- Steering calibration (TUNE THESE) -->
-      <param name="steer_center_us">1500.0</param>
+      <param name="steer_center_us">1600.0</param>
       <param name="steer_us_per_rad">500.0</param>
       <param name="steer_min_us">1100.0</param>
-      <param name="steer_max_us">1900.0</param>
+      <param name="steer_max_us">2100.0</param>
 
       <!-- Throttle calibration (TUNE THESE; start gentle) -->
       <param name="throttle_neutral_us">1500.0</param>
