@@ -5,6 +5,7 @@ WORKDIR /jetson_ws
 ENV DEBIAN_FRONTEND=noninteractive
 ENV USERNAME=jetson
 ENV HOME=/home/$USERNAME
+# ENV RMW_IMPLEMENTATION=rmw_fastrtps_cpp
 
 RUN apt-get update || true && apt-get install -y curl 
 
@@ -25,8 +26,8 @@ COPY . .
 #     --rosdistro humble \
 #     --skip-keys "gazebo_ros gazebo_ros_pkgs gazebo_plugins gz_ros2_control gazebo_ros2_control ros_gz ros_gz_sim ros_gz_bridge ament_pep257 geometry_msgs ament_cmake sensor_msgs"
 
-# RUN . /opt/ros/humble/setup.bash && \
-    # colcon build
+RUN rm -rf build log install
 
 RUN echo 'source /opt/ros/humble/setup.bash' >> /etc/bash.bashrc && \
     echo 'if [ -f /jetson_ws/install/setup.bash ]; then source /jetson_ws/install/setup.bash; fi' >> /etc/bash.bashrc
+
