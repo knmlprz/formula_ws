@@ -31,9 +31,6 @@
     <node pkg="topic_tools" exec="relay" name="cmd_vel_relay" output="screen"
             args="/cmd_vel /teleop/cmd_vel" />
 
-    <node name="rviz" pkg="rviz2" exec="rviz2" output="screen" 
-        args="-d $(var rviz_path)" />
-
     <node pkg="twist_mux" exec="twist_mux" name="twist_mux" output="screen">
         <param from="$(var tmux)" /> 
         <remap from="cmd_vel_out" to="/bicycle_steering_controller/reference"/>
