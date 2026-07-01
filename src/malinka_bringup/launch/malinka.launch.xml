@@ -1,0 +1,47 @@
+<launch>
+    <let name="navigation_pkg" value="$(find-pkg-share platform_navigation)" />
+
+    <node pkg="twist_stamper" exec="twist_unstamper" name="twist_unstamper" output="screen">
+        <remap from="cmd_vel_in" to="/ittc/cmd_vel"/>
+        <remap from="cmd_vel_out" to="/ittc/cmd_vel_unstamped"/>
+    </node>
+
+    <node pkg="twist_stamper" exec="twist_unstamper" name="twist_unstamper" output="screen">
+        <remap from="cmd_vel_in" to="/ftg/cmd_vel"/>
+        <remap from="cmd_vel_out" to="/ftg/cmd_vel_unstamped"/>
+    </node>
+
+    <node pkg="twist_stamper" exec="twist_unstamper" name="twist_unstamper" output="screen">
+        <remap from="cmd_vel_in" to="/teleop/cmd_vel"/>
+        <remap from="cmd_vel_out" to="/teleop/cmd_vel_unstamped"/>
+    </node>
+
+    <node pkg="twist_stamper" exec="twist_stamper" name="twist_stamper" output="screen">
+        <remap from="cmd_vel_in" to="/cmd_vel_out"/>
+        <remap from="cmd_vel_out" to="/ackermann_steering_controller/reference"/>
+    </node>
+
+    <node pkg="twist_mux" exec="twist_mux" name="twist_mux" output="screen">
+        <param from="$(var tmux)" /> 
+    </node>
+
+    <node pkg="topic_tools" exec="relay" name="cmd_vel_relay" output="screen"
+            args="/cmd_vel /teleop/cmd_vel" />
+
+
+    <node pkg="platform_navigation" exec="ittc" name="ittc" output="screen">
+        <remap from="/ackermann_steering_controller/reference" to="/ittc/cmd_vel"/>
+    </node>
+
+    <node pkg="platform_navigation" exec="gap_follower" name="gap_follower" output="screen">
+        <remap from="/ackermann_steering_controller/reference" to="/ftg/cmd_vel"/>
+        <param name="max_distance" value="0.2" />
+        <param name="fov_dev" value="180" />
+        <param name="gap_threshold" value="0.2" />
+        <param name="bubble_size_m" value="0.10" />
+        <param name="wheelbase" value="0.173" />
+        <param name="max_steering_angle" value="0.6" />
+        <param name="drive_speed" value="0.8" />
+    </node>
+
+</launch>
