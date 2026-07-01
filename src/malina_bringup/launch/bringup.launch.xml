@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!--
+  bringup.launch.xml
+
+  Nadrzedny launch startujacy caly stos pojazdu:
+    - opis robota (URDF + robot_state_publisher)
+    - wezel sterownika (cmd_vel_controller)
+
+  Uzycie:
+    ros2 launch rc_car_controller bringup.launch.xml
+    ros2 launch rc_car_controller bringup.launch.xml estop_enabled:=false
+-->
+<launch>
+
+  <arg name="can_interface" default="can0"/>
+  <arg name="estop_enabled" default="false"/>
+  <arg name="use_sim_time"  default="false"/>
+
+  <!-- Opis robota + TF stawow -->
+  <include file="$(find-pkg-share rc_car_controller)/launch/description.launch.xml">
+    <arg name="gui" value="false"/>
+    <arg name="rviz" value="false"/>
+  </include>
+
+  <!-- Sterownik pojazdu -->
+  <include file="$(find-pkg-share rc_car_controller)/launch/controller.launch.xml">
+    <arg name="can_interface" value="$(var can_interface)"/>
+    <arg name="estop_enabled" value="$(var estop_enabled)"/>
+    <arg name="use_sim_time"  value="$(var use_sim_time)"/>
+  </include>
+
+</launch>
