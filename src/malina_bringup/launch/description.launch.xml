@@ -28,7 +28,8 @@
         name="robot_state_publisher"
         output="screen">
     <param name="robot_description"
-           value="$(command 'xacro $(var model)')"/>
+           value="$(command 'xacro $(var model)')"
+           type="str"/>
   </node>
 
   <!-- joint_state_publisher (bez GUI) - publikuje stany stawow kol -->
