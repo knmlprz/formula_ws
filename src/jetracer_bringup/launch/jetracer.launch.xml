@@ -28,28 +28,28 @@
             args="bicycle_steering_controller -c /controller_manager" />
 
     <node pkg="twist_stamper" exec="twist_unstamper" name="twist_unstamper" output="screen">
-        <remap from="input" to="/ittc/cmd_vel"/>
-        <remap from="output" to="/ittc/cmd_vel_unstamped"/>
+        <remap from="cmd_vel_in" to="/ittc/cmd_vel"/>
+        <remap from="cmd_vel_out" to="/ittc/cmd_vel_unstamped"/>
     </node>
 
     <node pkg="twist_stamper" exec="twist_unstamper" name="twist_unstamper" output="screen">
-        <remap from="input" to="/ftg/cmd_vel"/>
-        <remap from="output" to="/ftg/cmd_vel_unstamped"/>
+        <remap from="cmd_vel_in" to="/ftg/cmd_vel"/>
+        <remap from="cmd_vel_out" to="/ftg/cmd_vel_unstamped"/>
     </node>
 
     <node pkg="twist_stamper" exec="twist_unstamper" name="twist_unstamper" output="screen">
-        <remap from="input" to="/pursuit/cmd_vel"/>
-        <remap from="output" to="/pursuit/cmd_vel_unstamped"/>
+        <remap from="cmd_vel_in" to="/pursuit/cmd_vel"/>
+        <remap from="cmd_vel_out" to="/pursuit/cmd_vel_unstamped"/>
     </node>
 
     <node pkg="twist_stamper" exec="twist_unstamper" name="twist_unstamper" output="screen">
-        <remap from="input" to="/teleop/cmd_vel"/>
-        <remap from="output" to="/teleop/cmd_vel_unstamped"/>
+        <remap from="cmd_vel_in" to="/teleop/cmd_vel"/>
+        <remap from="cmd_vel_out" to="/teleop/cmd_vel_unstamped"/>
     </node>
 
     <node pkg="twist_stamper" exec="twist_stamper" name="twist_stamper" output="screen">
-        <remap from="input" to="/cmd_vel_out"/>
-        <remap from="output" to="/bicycle_steering_controller/reference"/>
+        <remap from="cmd_vel_in" to="/cmd_vel_out"/>
+        <remap from="cmd_vel_out" to="/bicycle_steering_controller/reference"/>
     </node>
 
     <!-- teleop /cmd_vel -> twist_mux -->
