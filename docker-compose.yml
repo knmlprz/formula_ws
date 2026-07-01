@@ -1,35 +1,52 @@
-version: '3.8'
+version: '3'
 
 services:
   jetson_ws:
-    build:
-      context: .
-      dockerfile: Dockerfile.jetson
-    image: jetson-ros-humble:local
-    container_name: jetson-ros-humble
+    image: ros:humble-ros-base
+    container_name: jetson-ros2_ws
     working_dir: /jetson_ws
     
-    # Sieć i uprawnienia dla DDS, I2C oraz peryferiów
     network_mode: "host"
     privileged: true
     ipc: host
     pid: host
     
-    # Przekazanie GPU (NVIDIA Container Runtime)
     runtime: nvidia
-    environment:
-      - RMW_IMPLEMENTATION=rmw_fastrtps_cpp
 
-    # Mapowanie urządzeń - zamiast pojedynczych linii lepiej zmapować cały /dev, 
-    # żeby kontener od razu widział kamery, IMU, LiDAR i szyny I2C bez edycji pliku.
     volumes:
+      - ./src:/jetson_ws/src
       - /dev:/dev
-      # OPCJONALNIE: Odkomentuj linię poniżej, jeśli chcesz edytować kod źródłowy na Jetsonie "w locie"
-      - .:/jetson_ws
-
-    # Utrzymanie kontenera przy życiu w tle
+    
     stdin_open: true
     tty: true
 
-    # Czyszczenie entrypoint/command, żeby kontener startował prosto do basha
     entrypoint: [""]
+    command:
+      - /bin/bash
+      - -c
+      - |
+        set -ex
+        echo "START-MARKER"
+        
+        echo "Acquire::Check-Valid-Until \"false\"; Acquire::AllowInsecureRepositories \"true\";" > /etc/apt/apt.conf.d/99ignore-gpg
+        
+        apt-get update --allow-insecure-repositories || true
+        apt-get install -y --allow-unauthenticated git i2c-tools libi2c-dev
+        
+        rm -rf /jetson_ws/src/*
+        git clone --recurse-submodules -b development https://github.com/knmlprz/formula_ws.git /tmp/repo
+        cp -a /tmp/repo/src/. /jetson_ws/src/
+        rm -rf /tmp/repo
+        
+        rosdep update --rosdistro humble
+        rosdep install --from-paths src --ignore-src -y --rosdistro humble \
+          --skip-keys "gazebo_ros gazebo_ros_pkgs gazebo_plugins gz_ros2_control gazebo_ros2_control ros_gz ros_gz_sim ros_gz_bridge"
+        
+        rm -rf build/ install/ log/
+        . /opt/ros/humble/setup.sh
+        colcon build
+        
+        grep -qxF 'source /opt/ros/humble/setup.bash' ~/.bashrc || echo 'source /opt/ros/humble/setup.bash' >> ~/.bashrc
+        grep -qxF 'source /jetson_ws/install/setup.bash' ~/.bashrc || echo 'source /jetson_ws/install/setup.bash' >> ~/.bashrc
+        
+        tail -f /dev/null
