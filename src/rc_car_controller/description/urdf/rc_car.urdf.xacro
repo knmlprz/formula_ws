@@ -3,13 +3,13 @@
   rc_car.urdf.xacro
 
   Opis pojazdu RC (model Ackermanna) dla ROS2 Jazzy.
-  Wymiary zgodne z pomiarami fizycznymi:
-    - dlugosc calkowita: 0.40 m
-    - wysokosc:          0.15 m
-    - rozstaw osi:       0.34 m (wheelbase)
-    - rozstaw kol:       0.21 m (track_width)
-    - kolo srednica:     0.0625 m (promien 0.03125 m)
-    - kolo szerokosc:    0.027 m
+  Wymiary zgodne z pomiarami fizycznymi -
+    - dlugosc calkowita  0.40 m
+    - wysokosc           0.15 m
+    - rozstaw osi        0.34 m (wheelbase)
+    - rozstaw kol        0.21 m (track_width)
+    - kolo srednica      0.0625 m (promien 0.03125 m)
+    - kolo szerokosc     0.027 m
 
   Ramka base_link umieszczona na srodku tylnej osi (konwencja Ackermanna),
   na wysokosci srodka kol.

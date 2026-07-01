@@ -18,6 +18,7 @@ i moga byc nadpisane z pliku config/controller_params.yaml lub z launcha.
 import struct
 import sys
 import math
+import time
 
 import rclpy
 from rclpy.node import Node
@@ -47,6 +48,10 @@ class OdriveAxis:
         self.direction = direction
         self.max_speed = max_speed
         self.logger = logger
+        # Stan z heartbeatu (cmd 0x01): aktualizowany w read_can
+        self.current_state = 1     # domyslnie IDLE
+        self.axis_error = 0
+        self.last_commanded_vel = 0.0
 
     def _send(self, cmd_id, data):
         arbitration_id = (self.node_id << 5) | cmd_id
@@ -67,13 +72,35 @@ class OdriveAxis:
 
     def set_velocity(self, velocity: float, torque_ff: float = 0.0):
         velocity = clamp(velocity, -self.max_speed, self.max_speed)
+        self.last_commanded_vel = velocity
         vel_to_send = velocity * self.direction
         self._send(0x0d, struct.pack('<ff', float(vel_to_send), float(torque_ff)))
 
     def arm_velocity_mode(self):
+        # Kolejnosc ma znaczenie: najpierw wyczysc bledy, ustaw tryb sterowania
+        # (velocity + vel_ramp), wyslij prledkosc 0 (aby ODrive mial zdefiniowany
+        # input i NIE rzucil bledu MISSING_INPUT), a DOPIERO potem wejdz w closed-loop.
         self.clear_errors()
+        time.sleep(0.05)
+        self.set_controller_mode(control_mode=2, input_mode=2)  # 2 = VELOCITY_CONTROL, 2 = INPUT_MODE_VEL_RAMP
+        time.sleep(0.05)
+        self.set_velocity(0.0)   # zdefiniuj input PRZED uzbrojeniem -> brak MISSING_INPUT
+        time.sleep(0.05)
         self.set_state(8)  # AXIS_STATE_CLOSED_LOOP_CONTROL
-        self.set_controller_mode(control_mode=2, input_mode=2)  # 2 = INPUT_MODE_VEL_RAMP (lagodny start)
+        time.sleep(0.05)
+
+    def ensure_armed(self):
+        """Jesli os wypadla z closed-loop (np. do IDLE po bledzie), uzbroj ja ponownie.
+        Zwraca True jesli os jest gotowa do jazdy."""
+        if self.current_state != 8:  # nie w CLOSED_LOOP_CONTROL
+            self.logger.warn(
+                f"Os {self.node_id} nie jest w closed-loop (stan={self.current_state}, "
+                f"err=0x{self.axis_error:X}). Ponowne uzbrajanie...",
+                throttle_duration_sec=2.0
+            )
+            self.arm_velocity_mode()
+            return False
+        return True
 
     def disarm(self):
         self.set_state(1)  # AXIS_STATE_IDLE
@@ -288,7 +315,16 @@ class CmdVelController(Node):
                 node_id = msg.arbitration_id >> 5
                 cmd_id = msg.arbitration_id & 0x1f
 
-                if cmd_id == 0x09:  # Get_Encoder_Estimates
+                if cmd_id == 0x01:  # Heartbeat: Axis_Error (u32) + Axis_State (u8)
+                    axis_error, axis_state = struct.unpack('<IB', msg.data[:5])
+                    if node_id == self.axis0_node_id:
+                        self.axis0.axis_error = axis_error
+                        self.axis0.current_state = axis_state
+                    elif node_id == self.axis1_node_id:
+                        self.axis1.axis_error = axis_error
+                        self.axis1.current_state = axis_state
+
+                elif cmd_id == 0x09:  # Get_Encoder_Estimates
                     pos_est, vel_est = struct.unpack('<ff', msg.data)
                     now = self.get_clock().now()
                     if node_id == self.axis0_node_id:
@@ -312,6 +348,13 @@ class CmdVelController(Node):
         if elapsed > self.watchdog_timeout or self.estop_active:
             linear = 0.0
             angular = 0.0
+            # Diagnostyka: rozroznij czy to watchdog (brak cmd_vel) czy E-Stop
+            if not self.estop_active and self.target_linear != 0.0:
+                self.get_logger().warn(
+                    f"[WATCHDOG] Brak swiezych komend od {elapsed:.2f}s (limit "
+                    f"{self.watchdog_timeout}s) - zatrzymanie. Teleop musi publikowac ciagle.",
+                    throttle_duration_sec=1.0
+                )
         else:
             linear = self.target_linear
             angular = self.target_angular
@@ -379,10 +422,17 @@ class CmdVelController(Node):
         self.odom_pub.publish(odom_msg)
 
         # 6. Sterowanie ODrive
+        # Najpierw upewnij sie, ze osie sa uzbrojone (closed-loop). Jesli
+        # wypadly do IDLE (np. MISSING_INPUT / blad), ensure_armed je odzyska.
+        a0_ready = self.axis0.ensure_armed()
+        a1_ready = self.axis1.ensure_armed()
+
         velocity_rps = (linear / self.max_linear_speed) * self.max_odrive_speed if self.max_linear_speed else 0.0
         try:
-            self.axis0.set_velocity(velocity_rps)
-            self.axis1.set_velocity(velocity_rps)
+            # Wysylaj prledkosc tylko gdy os gotowa; w przeciwnym razie wysylanie
+            # 0 utrzymuje zdefiniowany input (zapobiega ponownemu MISSING_INPUT).
+            self.axis0.set_velocity(velocity_rps if a0_ready else 0.0)
+            self.axis1.set_velocity(velocity_rps if a1_ready else 0.0)
         except Exception as e:
             self.get_logger().warn(f"Blad wysylania predkosci do ODrive: {e}")
 

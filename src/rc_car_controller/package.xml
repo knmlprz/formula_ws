@@ -25,10 +25,11 @@
 
   <!-- Zaleznosci opisu robota / launcha -->
   <exec_depend>robot_state_publisher</exec_depend>
-  <exec_depend>joint_state_publisher</exec_depend>
-  <exec_depend>joint_state_publisher_gui</exec_depend>
   <exec_depend>xacro</exec_depend>
   <exec_depend>rviz2</exec_depend>
+
+  <!-- Opcjonalne (tylko do wizualizacji obrotu kol w RViz):
+       ros-jazzy-joint-state-publisher, ros-jazzy-joint-state-publisher-gui -->
 
   <!-- Zaleznosci Python spoza ROS (instalowane pip/apt):
        python3-can, gpiozero, lgpio -->
