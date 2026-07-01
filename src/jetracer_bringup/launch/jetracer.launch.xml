@@ -15,6 +15,8 @@
     <node pkg="controller_manager" exec="ros2_control_node" output="both">
         <param name="robot_description" value="$(var robot_description)" />
         <param from="$(var params_file)" />
+
+        <remap from="/bicycle_steering_controller/odometry" to="/odom" />
     </node>
 
     <node pkg="robot_state_publisher" exec="robot_state_publisher" output="both">
