@@ -2,25 +2,21 @@ twist_mux:
   ros__parameters:
     topics:
       teleop:
-        topic:   "/teleop/cmd_vel"
-        msg_type: "geometry_msgs/msg/TwistStamped" # <- KLUCZOWE
+        topic:   "/teleop/cmd_vel_unstamped"
         timeout: 0.5
         priority: 120
       ittc:
-        topic:   "/ittc/cmd_vel"
-        msg_type: "geometry_msgs/msg/TwistStamped" # <- KLUCZOWE
+        topic:   "/ittc/cmd_vel_unstamped"
         timeout: 0.5
         priority: 100
 
       pursuit:
-        topic:   "/pursuit/cmd_vel"
-        msg_type: "geometry_msgs/msg/TwistStamped" # <- KLUCZOWE
+        topic:   "/pursuit/cmd_vel_unstamped"
         timeout: 0.5
         priority: 80
 
       ftg:
-        topic:   "/ftg/cmd_vel"
-        msg_type: "geometry_msgs/msg/TwistStamped" # <- KLUCZOWE
+        topic:   "/ftg/cmd_vel_unstamped"
         timeout: 0.5
         priority: 50
 

@@ -27,13 +27,38 @@
     <node pkg="controller_manager" exec="spawner" name="bicycle_spawner"
             args="bicycle_steering_controller -c /controller_manager" />
 
+    <node pkg="twist_stamper" exec="twist_unstamper" name="twist_unstamper" output="screen">
+        <remap from="input" to="/ittc/cmd_vel"/>
+        <remap from="output" to="/ittc/cmd_vel_unstamped"/>
+    </node>
+
+    <node pkg="twist_stamper" exec="twist_unstamper" name="twist_unstamper" output="screen">
+        <remap from="input" to="/ftg/cmd_vel"/>
+        <remap from="output" to="/ftg/cmd_vel_unstamped"/>
+    </node>
+
+    <node pkg="twist_stamper" exec="twist_unstamper" name="twist_unstamper" output="screen">
+        <remap from="input" to="/pursuit/cmd_vel"/>
+        <remap from="output" to="/pursuit/cmd_vel_unstamped"/>
+    </node>
+
+    <node pkg="twist_stamper" exec="twist_unstamper" name="twist_unstamper" output="screen">
+        <remap from="input" to="/teleop/cmd_vel"/>
+        <remap from="output" to="/teleop/cmd_vel_unstamped"/>
+    </node>
+
+    <node pkg="twist_stamper" exec="twist_stamper" name="twist_stamper" output="screen">
+        <remap from="input" to="/cmd_vel_out"/>
+        <remap from="output" to="/bicycle_steering_controller/reference"/>
+    </node>
+
     <!-- teleop /cmd_vel -> twist_mux -->
     <node pkg="topic_tools" exec="relay" name="cmd_vel_relay" output="screen"
             args="/cmd_vel /teleop/cmd_vel" />
 
     <node pkg="twist_mux" exec="twist_mux" name="twist_mux" output="screen">
         <param from="$(var tmux)" /> 
-        <remap from="cmd_vel_out" to="/bicycle_steering_controller/reference"/>
+        <!-- <remap from="cmd_vel_out" to="/bicycle_steering_controller/reference"/> -->
     </node>
 
     <node pkg="platform_navigation" exec="ittc" name="ittc" output="screen">
@@ -51,7 +76,7 @@
         <param name="drive_speed" value="0.8" />
     </node>
 
-    <node pkg="platform_navigation" exec="cone_detector" name="cone_detector" output="screen">
+    <!-- <node pkg="platform_navigation" exec="cone_detector" name="cone_detector" output="screen">
         <param name="min_range" value="0.2" />
         <param name="max_range" value="1.0" />
         <param name="cluster_threshold" value="0.15" />
@@ -59,7 +84,7 @@
         <param name="max_cluster_size" value="100" />
         <param name="min_cone_width" value="0.1" />
         <param name="max_cone_width" value="0.5" />
-    </node>
+    </node> -->
 
     <!-- <node pkg="loop_detector" exec="loop_detector" name="loop_detector" output="screen">
     </node> -->
