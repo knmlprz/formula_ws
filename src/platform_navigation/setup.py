@@ -29,6 +29,8 @@ setup(
             'ittc = platform_navigation.ittc:main',
             'cone_detector = platform_navigation.cone_detector:main',
             'cone_slam = platform_navigation.cone_slam:main',
+            'centerline_planner = platform_navigation.centerline_planner:main',
+            'pure_pursuit = platform_navigation.pure_pursuit:main',
         ],
     },
 )

@@ -1,0 +1,56 @@
+# ============================================================================
+# controller_params.yaml
+#
+# Parametry wezla cmd_vel_controller dopasowane do konkretnego pojazdu RC.
+#
+# Wymiary pojazdu:
+#   - dlugosc calkowita: 40 cm
+#   - wysokosc:          15 cm
+#   - rozstaw osi:       34 cm  -> wheelbase = 0.34 m
+#   - rozstaw kol:       21 cm  -> track_width = 0.21 m
+#   - kolo srednica:     62.5 mm -> wheel_radius = 0.03125 m
+#   - kolo szerokosc:    27 mm
+#   - max kat skretu:    40 st  -> steer_limit = 0.698 rad
+# ============================================================================
+
+cmd_vel_controller:
+  ros__parameters:
+
+    # ---------- UKLAD KIEROWNICZY (SERWO) ----------
+    servo_pin: 12
+    servo_min_pulse: 0.0007      # [s] minimalna szerokosc impulsu PWM
+    servo_max_pulse: 0.0023      # [s] maksymalna szerokosc impulsu PWM
+    steer_limit: 0.698           # [rad] 40 stopni - maksymalny kat skretu kol
+
+    # ---------- NAPED (ODrive przez CAN) ----------
+    can_interface: "can0"
+    axis0_node_id: 0
+    axis1_node_id: 1
+    axis0_direction: -1          # kierunek montazu silnika osi 0
+    axis1_direction: 1           # kierunek montazu silnika osi 1
+    max_odrive_speed: 6.0        # [turns/s] maksymalna predkosc obrotowa silnika
+
+    # ---------- OGRANICZENIA PREDKOSCI (wejscie cmd_vel) ----------
+    max_linear_speed: 1.0        # [m/s] max predkosc liniowa mapowana na cmd_vel
+    max_angular_speed: 1.0       # [rad/s] max predkosc katowa mapowana na skret
+
+    # ---------- GEOMETRIA POJAZDU ----------
+    wheel_radius: 0.03125        # [m] promien kola (62.5 mm / 2)
+    wheelbase: 0.34              # [m] rozstaw osi (przod-tyl)
+    track_width: 0.21            # [m] rozstaw kol (lewo-prawo)
+
+    # ---------- RAMY TF / ODOMETRIA ----------
+    odom_frame: "odom"
+    base_frame: "base_link"
+    publish_tf: true             # publikuj transformacje odom->base_link
+
+    # ---------- BEZPIECZENSTWO ----------
+    watchdog_timeout: 0.5        # [s] brak cmd_vel dluzej niz to -> stop
+    control_loop_hz: 20.0        # [Hz] czestotliwosc glownej petli sterowania
+    can_feed_timeout: 0.5        # [s] brak ramek enkodera dluzej -> fallback
+
+    # ---------- ZATRZYMANIE AWARYJNE (E-STOP, LiDAR) ----------
+    estop_enabled: true
+    estop_distance: 0.30         # [m] dystans wykrycia przeszkody -> stop
+    estop_min_range: 0.08        # [m] ignoruj blizsze odbicia (obudowa/zderzak)
+    estop_fov: 0.52              # [rad] polkat wycinka z przodu (~+/-30 st)

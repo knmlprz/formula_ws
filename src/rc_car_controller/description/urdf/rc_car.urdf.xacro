@@ -1,0 +1,127 @@
+<?xml version="1.0"?>
+<!--
+  rc_car.urdf.xacro
+
+  Opis pojazdu RC (model Ackermanna) dla ROS2 Jazzy.
+  Wymiary zgodne z pomiarami fizycznymi:
+    - dlugosc calkowita: 0.40 m
+    - wysokosc:          0.15 m
+    - rozstaw osi:       0.34 m (wheelbase)
+    - rozstaw kol:       0.21 m (track_width)
+    - kolo srednica:     0.0625 m (promien 0.03125 m)
+    - kolo szerokosc:    0.027 m
+
+  Ramka base_link umieszczona na srodku tylnej osi (konwencja Ackermanna),
+  na wysokosci srodka kol.
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="rc_car">
+
+  <!-- ========== PARAMETRY GEOMETRII ========== -->
+  <xacro:property name="base_length"  value="0.40"/>
+  <xacro:property name="base_width"   value="0.18"/>
+  <xacro:property name="base_height"  value="0.10"/>
+  <xacro:property name="wheelbase"    value="0.34"/>
+  <xacro:property name="track_width"  value="0.21"/>
+  <xacro:property name="wheel_radius" value="0.03125"/>
+  <xacro:property name="wheel_width"  value="0.027"/>
+
+  <!-- Wysokosc srodka kol nad podlozem = promien kola -->
+  <xacro:property name="wheel_z"      value="0.0"/>
+
+  <!-- ========== MATERIALY ========== -->
+  <material name="chassis_color">
+    <color rgba="0.2 0.2 0.25 1.0"/>
+  </material>
+  <material name="wheel_color">
+    <color rgba="0.05 0.05 0.05 1.0"/>
+  </material>
+
+  <!-- ========== MAKRO KOLA ========== -->
+  <xacro:macro name="wheel" params="name x y">
+    <link name="${name}">
+      <visual>
+        <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+        <geometry>
+          <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+        </geometry>
+        <material name="wheel_color"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+        <geometry>
+          <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="0.05"/>
+        <inertia ixx="0.00002" ixy="0.0" ixz="0.0"
+                 iyy="0.00002" iyz="0.0" izz="0.00003"/>
+      </inertial>
+    </link>
+
+    <joint name="${name}_joint" type="continuous">
+      <parent link="base_link"/>
+      <child link="${name}"/>
+      <origin xyz="${x} ${y} ${wheel_z}" rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+    </joint>
+  </xacro:macro>
+
+  <!-- ========== BASE LINK (srodek tylnej osi) ========== -->
+  <link name="base_link">
+    <visual>
+      <!-- nadwozie przesuniete do przodu wzgledem tylnej osi -->
+      <origin xyz="${wheelbase/2} 0 ${base_height/2}" rpy="0 0 0"/>
+      <geometry>
+        <box size="${base_length} ${base_width} ${base_height}"/>
+      </geometry>
+      <material name="chassis_color"/>
+    </visual>
+    <collision>
+      <origin xyz="${wheelbase/2} 0 ${base_height/2}" rpy="0 0 0"/>
+      <geometry>
+        <box size="${base_length} ${base_width} ${base_height}"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="${wheelbase/2} 0 ${base_height/2}" rpy="0 0 0"/>
+      <mass value="2.0"/>
+      <inertia ixx="0.01" ixy="0.0" ixz="0.0"
+               iyy="0.02" iyz="0.0" izz="0.02"/>
+    </inertial>
+  </link>
+
+  <!-- base_footprint na poziomie podlogi -->
+  <link name="base_footprint"/>
+  <joint name="base_footprint_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+    <origin xyz="0 0 ${wheel_radius}" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ========== KOLA ========== -->
+  <!-- Tylne (napedowe) - na osi base_link -->
+  <xacro:wheel name="rear_left_wheel"  x="0" y="${track_width/2}"/>
+  <xacro:wheel name="rear_right_wheel" x="0" y="${-track_width/2}"/>
+
+  <!-- Przednie (skretne) - przesuniete o wheelbase do przodu -->
+  <xacro:wheel name="front_left_wheel"  x="${wheelbase}" y="${track_width/2}"/>
+  <xacro:wheel name="front_right_wheel" x="${wheelbase}" y="${-track_width/2}"/>
+
+  <!-- ========== LiDAR ========== -->
+  <link name="laser">
+    <visual>
+      <geometry>
+        <cylinder radius="0.035" length="0.04"/>
+      </geometry>
+      <material name="chassis_color"/>
+    </visual>
+  </link>
+  <joint name="laser_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="laser"/>
+    <!-- LiDAR na srodku pojazdu, na dachu -->
+    <origin xyz="${wheelbase/2} 0 ${base_height + 0.03}" rpy="0 0 0"/>
+  </joint>
+
+</robot>
