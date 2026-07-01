@@ -36,13 +36,13 @@
 
     <node pkg="platform_navigation" exec="gap_follower" name="gap_follower" output="screen">
         <remap from="/ackermann_steering_controller/reference" to="/ftg/cmd_vel"/>
-        <param name="max_distance" value="0.2" />
+        <param name="max_distance" value="1.0" />
         <param name="fov_dev" value="180" />
-        <param name="gap_threshold" value="0.2" />
+        <param name="gap_threshold" value="0.4" />
         <param name="bubble_size_m" value="0.10" />
         <param name="wheelbase" value="0.173" />
         <param name="max_steering_angle" value="0.6" />
-        <param name="drive_speed" value="0.8" />
+        <param name="drive_speed" value="0.3" />
     </node>
 
 </launch>
