@@ -1,4 +1,5 @@
 <launch>
+    <let name="tmux" value="$(find-pkg-share platform_bringup)/config/twist_mux.yaml" />
     <let name="navigation_pkg" value="$(find-pkg-share platform_navigation)" />
 
     <node pkg="twist_stamper" exec="twist_unstamper" name="twist_unstamper" output="screen">
